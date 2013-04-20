@@ -1,5 +1,11 @@
 // initialize everything on document ready
 $(function() {
+  // wire up the track selection box 
+  $("select#track-select").change(function() {
+    var selector = $(this).val();
+    $(".track").css("display","none");
+    $("#" + selector).show();
+  });
 
   var socket = io.connect('http://localhost');
 
@@ -16,6 +22,11 @@ $(function() {
         }
       }
     }
+  });
+
+  socket.on("clock-event", function(data) {
+    $(".elipse").removeClass("current-step");
+    $(".elipse#" + data.step).addClass("current-step");
   });
 
   socket.on('group-step-update', function (data) {

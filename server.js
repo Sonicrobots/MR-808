@@ -4,21 +4,32 @@ var app = require('http').createServer(handler),
     io = require('socket.io').listen(app),
     fs = require('fs');
 
+var clockCount = 0;
+
 // TODO:
 // the session: should/could this live in a 
 // redis store so app can be scaled horizontally?
 var pattern = {
   tracks: [
-    { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0] }
+    { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "1", name: "sd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "2", name: "hh", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "3", name: "ho", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "4", name: "clp", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "5", name: "shk", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "6", name: "bass", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "7", name: "horn", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "8", name: "tuba", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
   ]
 };
 
 app.listen(3000);
 
+// web server for static files
 function handler (request, response) {
   var uri = url.parse(request.url).pathname, 
       filename = path.join(process.cwd(), uri);
-
+  
   path.exists(filename, function(exists) {
     if(!exists) {
       response.writeHead(404, {"Content-Type": "text/plain"});
@@ -44,21 +55,33 @@ function handler (request, response) {
   });
 };
 
+// handle client updates
 io.sockets.on('connection', function (socket) {
+  // when a new client connects, it should receive current state
   socket.emit("initialize", pattern);
+  // register callback for updates from this client
   socket.on('client-step-update', function (data) {
-
-    // store new state 
+    // first, we store new state 
     for(track = 0; track < pattern.tracks.length; track++) {
-      var track  = pattern.tracks[track];
-      if(track.name == data.trackName) {
-        track.steps[data.step] = data.state;
+      if(pattern.tracks[track].name == data.trackName) {
+        // put the state update into the right place
+        pattern.tracks[track].steps[data.step] = data.state;
       }
     }
-
-    // and push to other peers
+    // and push it on to other peers
     socket.broadcast.emit("group-step-update", data);
   });
 });
 
 
+function clockLoop() {
+  setTimeout(function() {
+    var step = clockCount % 16;
+    io.sockets.emit("clock-event", { step: "step-" + clockCount % 16 });
+
+    clockCount++;
+    clockLoop();
+  }, 300);
+};
+
+clockLoop();
