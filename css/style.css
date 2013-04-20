@@ -1,0 +1,19 @@
+.box {
+  background-color: #777;
+  float: left;
+  margin: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.box:hover {
+  background-color: #fa7100;
+}
+
+.with-shadow {
+  box-shadow: 10px 10px 5px #444;
+}
+
+.selected {
+  background-color: #ff0000;
+}
