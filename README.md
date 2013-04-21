@@ -18,11 +18,11 @@ FIXME, would ya....
 
 Change to project directory and install dependencies with:
 
-`npm install midi socket.io`
+    npm install midi socket.io
     
 Start the server application with:
 
-`node server.js`
+    node server.js
 
 Navigate to
 
