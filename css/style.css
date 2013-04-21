@@ -1,20 +1,36 @@
 body {
   margin: 0;
   padding: 0;
+  width: auto;
+  height: auto;
+}
+
+#main {
+  width: 100%;
+  height: 100%;
+  background-image: url('../img/bg.jpg');
 }
 
 .box {
   background-color: #bbb;
   float: left;
   margin: 5px;
-  width: 20px;
-  height: 30px;
+  width: 18px;
+  height: 40px;
   border-radius: 4px;
+  border: 1px solid black;
 }
 
 .sequencer {
-  width: 100%;
-  padding: 10%;
+  border: 10px solid #222;
+  background-color: #111;
+  width: 800px;
+  height: 480px;
+  position: relative;
+  top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 0px 50px 10px #000;
 }
 
 .box:hover {
@@ -51,8 +67,13 @@ select {
 .elipse {
   width: 10px;
   height: 10px;
-  background-color: #444;
+  background-color: #333333;
   border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
+}
+
+table.step-sequencer {
+  border: 1px solid red;
+  position: absolute;
 }
