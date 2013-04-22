@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>seq</title>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"></meta>
+    <meta charset="UTF-8" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/zepto.js"></script>
     <script src="js/client.js"></script>
@@ -10,7 +10,7 @@
   <body>
     <div id="main">
       <div class="sequencer">
-        <div class="track-dial">
+        <div id="track-dial">
           <select id="track-select">
             <option value="bd-0">bd</option> 
             <option value="sd-1">sd</option>  
@@ -23,6 +23,13 @@
             <option value="tuba-8">tuba</option>  
           </select>
         </div>
+
+        <img id="instruments" src="img/machine.jpg" />
+        <img id="tempo-dial" src="img/tempo-dial.jpg" />
+
+        <div class="left-function-box"> </div>
+        <div class="right-function-box"> </div>
+        <div class="bottom-bar"> </div>
         
         <table class="step-sequencer">
           <tr>
@@ -48,190 +55,190 @@
           <tr>
             <td>
               <div class="track" id="bd-0">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="sd-1">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="hh-2">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="ho-3">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="clp-4">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
               
               <div class="clearer"></div>
 
               <div class="track hidden" id="shk-5">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
               
               <div class="clearer"></div>
 
               <div class="track hidden" id="bass-6">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="horn-7">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
 
               <div class="clearer"></div>
 
               <div class="track hidden" id="tuba-8">
-                <div class="box" id="step-0"></div>
-                <div class="box" id="step-1"></div>
-                <div class="box" id="step-2"></div>
-                <div class="box" id="step-3"></div>
-                <div class="box" id="step-4"></div>
-                <div class="box" id="step-5"></div>
-                <div class="box" id="step-6"></div>
-                <div class="box" id="step-7"></div>
-                <div class="box" id="step-8"></div>
-                <div class="box" id="step-9"></div>
-                <div class="box" id="step-10"></div>
-                <div class="box" id="step-11"></div>
-                <div class="box" id="step-12"></div>
-                <div class="box" id="step-13"></div>
-                <div class="box" id="step-14"></div>
-                <div class="box" id="step-15"></div>
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
               </div>
             </td>
           </tr>

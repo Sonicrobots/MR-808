@@ -1,6 +1,6 @@
 // initialize everything on document ready
 $(function() {
-  // wire up the track selection box 
+  // wire up the track selection box
   $("select#track-select").change(function() {
     var selector = $(this).val();
     $(".track").css("display","none");
@@ -14,11 +14,11 @@ $(function() {
     for(track = 0; track < pattern.tracks.length; track++) {
       var steps = pattern.tracks[track].steps;
       for(step = 0; step < steps.length; step++) {
-        var selector = "#" + pattern.tracks[track].name + "-" + pattern.tracks[track].id + " #step-" + step;
+        var selector = "#" + pattern.tracks[track].name + "-" + pattern.tracks[track].id + " #step-" + step + " .step-led";
         if(steps[step] > 0) {
-          $(selector).addClass("selected");
+          $(selector).addClass("step-selected");
         } else {
-          $(selector).removeClass("selected"); 
+          $(selector).removeClass("step-selected");
         }
       }
     }
@@ -30,12 +30,12 @@ $(function() {
   });
 
   socket.on('group-step-update', function (data) {
-    var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step;
+    var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
 
     if(data.state == 1) {
-      $(selector).addClass("selected");
+      $(selector).addClass("step-selected");
     } else {
-      $(selector).removeClass("selected");
+      $(selector).removeClass("step-selected");
     };
   });
 
@@ -45,13 +45,12 @@ $(function() {
         trackID = $(this).parent(".track").attr("id").split("-")[1];
 
     // switch state
-    $(this).toggleClass("selected");
+    $(this).children(".step-led").toggleClass("step-selected");
 
-    if( $(this).hasClass("selected") ) {
+    if( $(this).children(".step-led").hasClass("step-selected") ) {
       socket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
     } else {
       socket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 0 });
     }
-  });  
+  });
 });
-
