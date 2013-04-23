@@ -5,29 +5,30 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/zepto.js"></script>
     <script src="js/client.js"></script>
+    <link type="text/css" rel="stylesheet" media="all" href="css/fonts.css"></link>
     <link type="text/css" rel="stylesheet" media="all" href="css/style.css"></link>
   </head>
   <body>
     <div id="main">
-      <div class="sequencer">
-        <div id="track-dial">
-          <select id="track-select">
-            <option value="bd-0">bd</option> 
-            <option value="sd-1">sd</option>  
-            <option value="hh-2">hh</option>  
-            <option value="ho-3">ho</option>  
-            <option value="clp-4">clp</option>
-            <option value="shk-5">shk</option>  
-            <option value="bass-6">bass</option>  
-            <option value="horn-7">horn</option>  
-            <option value="tuba-8">tuba</option>  
-          </select>
+      <div class="sequencer">-
+
+        <div class="machine">
+          <img id="rattle" data-track-id="rattle-1" src="img/rattle.png" />
+          <img id="hats" data-track-id="hats-2" src="img/hats.png" />
+          <img id="bd" data-track-id="bd-0" class="track-selected" src="img/bd.png" />
+          <img id="snare" data-track-id="snare-3" src="img/snare.png" />
+          <img id="hands" data-track-id="hands-4" src="img/hands.png" />
+          <img id="cym" data-track-id="cym-5" src="img/cym.png" />
+          <img id="hb" data-track-id="hb-6" src="img/hb.png" />
+          <img id="clap" data-track-id="clap-7" src="img/clap.png" />
+          <img id="cong" data-track-id="cong-8" src="img/cong.png" />
         </div>
 
-        <img id="instruments" src="img/machine.jpg" />
         <img id="tempo-dial" src="img/tempo-dial.jpg" />
 
-        <div class="left-function-box"> </div>
+        <div class="left-title"><span class="wide">MR</span><div>808</div></div>
+
+        <div class="left-function-box">bd</div>
         <div class="right-function-box"> </div>
         <div class="bottom-bar"> </div>
         
@@ -75,7 +76,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="sd-1">
+              <div class="track hidden" id="rattle-1">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -96,7 +97,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="hh-2">
+              <div class="track hidden" id="hats-2">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -117,7 +118,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="ho-3">
+              <div class="track hidden" id="snare-3">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -138,28 +139,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="clp-4">
-                <div class="box red" id="step-0"><div class="step-led"></div></div>
-                <div class="box red" id="step-1"><div class="step-led"></div></div>
-                <div class="box red" id="step-2"><div class="step-led"></div></div>
-                <div class="box red" id="step-3"><div class="step-led"></div></div>
-                <div class="box orange" id="step-4"><div class="step-led"></div></div>
-                <div class="box orange" id="step-5"><div class="step-led"></div></div>
-                <div class="box orange" id="step-6"><div class="step-led"></div></div>
-                <div class="box orange" id="step-7"><div class="step-led"></div></div>
-                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
-                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
-                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
-                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
-                <div class="box white" id="step-12"><div class="step-led"></div></div>
-                <div class="box white" id="step-13"><div class="step-led"></div></div>
-                <div class="box white" id="step-14"><div class="step-led"></div></div>
-                <div class="box white" id="step-15"><div class="step-led"></div></div>
-              </div>
-              
-              <div class="clearer"></div>
-
-              <div class="track hidden" id="shk-5">
+              <div class="track hidden" id="hands-4">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -180,7 +160,28 @@
               
               <div class="clearer"></div>
 
-              <div class="track hidden" id="bass-6">
+              <div class="track hidden" id="cym-5">
+                <div class="box red" id="step-0"><div class="step-led"></div></div>
+                <div class="box red" id="step-1"><div class="step-led"></div></div>
+                <div class="box red" id="step-2"><div class="step-led"></div></div>
+                <div class="box red" id="step-3"><div class="step-led"></div></div>
+                <div class="box orange" id="step-4"><div class="step-led"></div></div>
+                <div class="box orange" id="step-5"><div class="step-led"></div></div>
+                <div class="box orange" id="step-6"><div class="step-led"></div></div>
+                <div class="box orange" id="step-7"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-8"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-9"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-10"><div class="step-led"></div></div>
+                <div class="box yellow" id="step-11"><div class="step-led"></div></div>
+                <div class="box white" id="step-12"><div class="step-led"></div></div>
+                <div class="box white" id="step-13"><div class="step-led"></div></div>
+                <div class="box white" id="step-14"><div class="step-led"></div></div>
+                <div class="box white" id="step-15"><div class="step-led"></div></div>
+              </div>
+              
+              <div class="clearer"></div>
+
+              <div class="track hidden" id="hb-6">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -201,7 +202,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="horn-7">
+              <div class="track hidden" id="clap-7">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -222,7 +223,7 @@
 
               <div class="clearer"></div>
 
-              <div class="track hidden" id="tuba-8">
+              <div class="track hidden" id="cong-8">
                 <div class="box red" id="step-0"><div class="step-led"></div></div>
                 <div class="box red" id="step-1"><div class="step-led"></div></div>
                 <div class="box red" id="step-2"><div class="step-led"></div></div>
@@ -242,6 +243,29 @@
               </div>
             </td>
           </tr>
+
+          <tr>
+            <td>
+              <div class="step-number">1</div>
+              <div class="step-number">2</div>
+              <div class="step-number">3</div>
+              <div class="step-number">4</div>
+              <div class="step-number">5</div>
+              <div class="step-number">6</div>
+              <div class="step-number">7</div>
+              <div class="step-number">8</div>
+              <div class="step-number">9</div>
+              <div class="step-number">10</div>
+              <div class="step-number">11</div>
+              <div class="step-number">12</div>
+              <div class="step-number">1</div>
+              <div class="step-number">2</div>
+              <div class="step-number">3</div>
+              <div class="step-number">4</div>
+              <div class="clearer"></div>
+            </td>
+          </tr>
+
         </table>
       </div>
     </div>

@@ -3,6 +3,7 @@
 }
 
 body {
+	font-family:'Conv_TR-909',Sans-Serif;
   margin: 0;
   padding: 0;
   width: auto;
@@ -31,7 +32,7 @@ body {
   border: 10px solid #111;
   background-color: #000;
   width: 800px;
-  height: 480px;
+  height: 420px;
   position: relative;
   top: 5%;
   margin-left: auto;
@@ -40,8 +41,17 @@ body {
   border-radius: 10px;
 }
 
+.step-number {
+  width: 24px;
+  height: 18px;
+  margin: 0 5px 0 5px;
+  text-align: center;
+  float: left;
+}
+
 /* single step styles */
 .box {
+  cursor: pointer;
   float: left;
   margin: 5px;
   width: 22px;
@@ -110,10 +120,16 @@ body {
 }
 
 /* table for the current track and step position led's */
+table td {
+  font-weight: bold;
+  font-size: 1.2em;
+  text-shadow: -1px -1px 0px #aaa, -1px 1px 0px #aaa, 1px -1px 0px #aaa, 1px 1px 0px #aaa;
+}
+
 table.step-sequencer {
   position: absolute;
-  bottom: 35px;
-  right: 80px;
+  bottom: 14px;
+  right: 79px;
 }
 
 #track-dial {
@@ -135,32 +151,61 @@ table.step-sequencer {
 }
 
 .left-function-box {
-  background-color: #eeeeee;
-  height: 120px;
-  width: 90px;
+  text-shadow: -1px -1px 0px #aaa, -1px 1px 0px #aaa, 1px -1px 0px #aaa, 1px 1px 0px #aaa;
+  text-align: center;
+  background-color: #666;
+  height: 60px;
+  width: 150px;
   position: absolute;
   bottom: 20px;
   left: 20px;
+  border: 1px solid #333;
   border-radius: 10px 10px 0px 10px;
+  box-shadow: 0px 0px 1px 2px #666;
+  font-size: 2em;
+  font-weight: bold;
+  padding-top: 60px;
 }
 
 .bottom-bar {
-  background-color: #eeeeee;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  background-color: #666;
   height: 15px;
-  width: 640px;
+  width: 550px;
   position: absolute;
   bottom: 20px;
-  left: 100px;
+  left: 170px;
+  box-shadow: 0px 0px 1px 2px #666;
 }
 
 .right-function-box {
-  background-color: #eeeeee;
+  border: 1px solid #333;
+  background-color: #666;
   height: 80px;
   width: 60px;
   position: absolute;
   bottom: 20px;
   right: 20px;
   border-radius: 10px 10px 10px 0px;
+  box-shadow: 0px 0px 1px 2px #666;
+}
+
+.left-title {
+  padding: 2px;
+  background-color: rgba(10,10,10,10);
+  box-shadow: 0 0 10px 5px rgba(10,10,10,10);
+  font-weight: bold;
+  font-size: 3.6em;
+  text-shadow: -1px -1px 0px #aaa, -1px 1px 0px #aaa, 1px -1px 0px #aaa, 1px 1px 0px #aaa;
+  position: absolute;
+  left: 25px;
+  top: 20px;
+  color: #666;
+}
+
+.wide {
+  font-size: 1.4em;
 }
 
 img#instruments {
@@ -172,7 +217,94 @@ img#instruments {
 
 img#tempo-dial {
   position: absolute;
-  left: 10px;
-  top: 220px;
-  width: 100px;
+  left: 35px;
+  top: 135px;
+  width: 120px;
+}
+
+div.machine {
+  position: absolute;
+  width: 595px;
+  height: 270px;
+  left: 185px;
+  top: 20px;
+}
+
+div.machine img {
+  position: absolute;
+  cursor: pointer;
+}
+
+img#hats {
+  top: 90px;
+}
+
+img#bd {
+  top: 200px;
+}
+
+img#snare {
+  left: 130px;
+}
+
+img#hands {
+  left: 130px;
+  top: 170px;
+}
+
+img#cym {
+  left: 290px;
+}
+
+img#hb {
+  left: 290px;
+  top: 135px;
+}
+
+img#clap {
+  right: 0;
+}
+ 
+img#cong {
+  right: 0;
+  top: 85px;
+}
+
+@-webkit-keyframes pulsate
+{
+  from
+  {
+    box-shadow: 0 0 4px 3px #fff;
+  }
+  to
+  {
+    box-shadow: 0 0 4px 3px #777;
+  }
+}
+ 
+@-moz-keyframes pulsate
+{
+  from
+  {
+    box-shadow: 0 0 4px 3px #fff;
+  }
+  to
+  {
+    box-shadow: 0 0 4px 3px #777;
+  }
+}
+
+.track-selected
+{
+  -webkit-animation-name: pulsate;
+  -webkit-animation-timing-function: ease-in-out;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+ 
+  -moz-animation-name: pulsate;
+  -moz-animation-timing-function: ease-in-out;
+  -moz-animation-duration: 1s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-direction: alternate;
 }

@@ -1,10 +1,11 @@
 // initialize everything on document ready
 $(function() {
-  // wire up the track selection box
-  $("select#track-select").change(function() {
-    var selector = $(this).val();
+  $(".machine img").click(function() {
     $(".track").css("display","none");
-    $("#" + selector).show();
+    $("#" + $(this).attr("data-track-id")).show();
+    $(".machine img").removeClass("track-selected");
+    $(this).addClass("track-selected");
+    $(".left-function-box").text($(this).attr("id"));
   });
 
   var socket = io.connect('http://localhost');
