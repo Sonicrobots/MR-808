@@ -1,0 +1,39 @@
+@-webkit-keyframes pulsate
+{
+  from
+  {
+    box-shadow: 0 0 4px 3px #fff;
+  }
+  to
+  {
+    box-shadow: 0 0 4px 3px #777;
+  }
+}
+ 
+@-moz-keyframes pulsate
+{
+  from
+  {
+    box-shadow: 0 0 4px 3px #fff;
+  }
+  to
+  {
+    box-shadow: 0 0 4px 3px #777;
+  }
+}
+
+.track-selected
+{
+  -webkit-animation-name: pulsate;
+  -webkit-animation-timing-function: ease-in-out;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+ 
+  -moz-animation-name: pulsate;
+  -moz-animation-timing-function: ease-in-out;
+  -moz-animation-duration: 1s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-direction: alternate;
+}
+

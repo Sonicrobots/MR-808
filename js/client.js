@@ -1,5 +1,11 @@
 // initialize everything on document ready
 $(function() {
+
+  // hack alert: center login box :(
+  $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
+  $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
+
+  // click handlers for machine instrument images
   $(".machine img").click(function() {
     $(".track").css("display","none");
     $("#" + $(this).attr("data-track-id")).show();

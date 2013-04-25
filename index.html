@@ -4,13 +4,24 @@
     <meta charset="UTF-8" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/zepto.js"></script>
+    <script src="js/zepto.cookie.js"></script>
     <script src="js/client.js"></script>
     <link type="text/css" rel="stylesheet" media="all" href="css/fonts.css"></link>
     <link type="text/css" rel="stylesheet" media="all" href="css/style.css"></link>
+    <link type="text/css" rel="stylesheet" media="all" href="css/animations.css"></link>
   </head>
   <body>
+    <div id="login-box">
+      <div class="inlay">
+        Enter a Nickname:
+        <input id="nick-name" class="login-input" type="text" />
+        <input id="submit-nick" class="login-submit" type="submit" value="Submit">
+      </div>
+    </div>
+    <div id="overlay"></div>
+
     <div id="main">
-      <div class="sequencer">-
+      <div class="sequencer">
 
         <div class="machine">
           <img id="rattle" data-track-id="rattle-1" src="img/rattle.png" />

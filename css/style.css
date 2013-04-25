@@ -11,6 +11,63 @@ body {
 }
 
 /* main div with wood panel background */
+#overlay {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  opacity: 0.7;
+  transition: opacity 5s ease-in-out;
+}
+
+#login-box {
+  z-index: 3;
+  position: absolute;
+  width: 230px;
+  height: 160px;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 0px 100px 40px #000,0 0 2px 2px #fff;
+}
+
+.inlay {
+  border: 3px solid #ddd;
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(241,241,241,1)), color-stop(51%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
+  padding: 30px 10px 0px 10px;
+  text-align: center;
+}
+
+input.login-input {
+  margin-top: 30px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+input.login-submit {
+  margin-top: 30px;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 2px 2px #ddd
+}
+
+input.login-submit:active {
+  box-shadow: 0 0 8px 8px #ddd;
+  background-color: #ddd;
+}
+
+/* main div with wood panel background */
 #main {
   width: 100%;
   height: 100%;
@@ -268,43 +325,4 @@ img#clap {
 img#cong {
   right: 0;
   top: 85px;
-}
-
-@-webkit-keyframes pulsate
-{
-  from
-  {
-    box-shadow: 0 0 4px 3px #fff;
-  }
-  to
-  {
-    box-shadow: 0 0 4px 3px #777;
-  }
-}
- 
-@-moz-keyframes pulsate
-{
-  from
-  {
-    box-shadow: 0 0 4px 3px #fff;
-  }
-  to
-  {
-    box-shadow: 0 0 4px 3px #777;
-  }
-}
-
-.track-selected
-{
-  -webkit-animation-name: pulsate;
-  -webkit-animation-timing-function: ease-in-out;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-direction: alternate;
- 
-  -moz-animation-name: pulsate;
-  -moz-animation-timing-function: ease-in-out;
-  -moz-animation-duration: 1s;
-  -moz-animation-iteration-count: infinite;
-  -moz-animation-direction: alternate;
 }

@@ -12,9 +12,7 @@ server.listen(3000);
 
 var clockCount = 0;
 
-// TODO:
-// the session: should/could this live in a
-// redis store so app can be scaled horizontally?
+// global variable to store state
 var pattern = {
   tracks: [
     { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
@@ -26,18 +24,36 @@ var pattern = {
     { id: "6", name: "hb", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     { id: "7", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     { id: "8", name: "cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
-  ]
+  ],
+  nicks: {}
 };
 
-// root route
+// configuration for all environments
+app.configure(function() {
+  // we need to use() bodyParser() so we have access to the nick name post data
+  app.use(express.bodyParser());
+  // parse Cookies
+  app.use(express.cookieParser());
+  app.use(express.session({secret: 'secret', key: 'seq.sid'}));
+
+  // static content
+  app.use("/img", express.static( path.join( process.cwd(), "img")));
+  app.use("/css", express.static( path.join( process.cwd(), "css")));
+  app.use("/fonts", express.static( path.join( process.cwd(), "fonts")));
+  app.use("/js", express.static( path.join( process.cwd(), "js")));
+});
+
+app.configure("development", function() {
+  app.use(function (req, res, next) {
+    console.log(req.headers);
+    next();
+  });
+});
+
+// root resource
 app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
-// static content served from here
-app.use("/img", express.static( path.join( process.cwd(), "img")));
-app.use("/css", express.static( path.join( process.cwd(), "css")));
-app.use("/fonts", express.static( path.join( process.cwd(), "fonts")));
-app.use("/js", express.static( path.join( process.cwd(), "js")));
 
 // handle client updates
 io.sockets.on('connection', function (socket) {
@@ -46,7 +62,7 @@ io.sockets.on('connection', function (socket) {
   // register callback for updates from this client
   socket.on('client-step-update', function (data) {
     // first, we store new state
-    for(track = 0; track < pattern.tracks.length; track++) {
+    for( var track = 0; track < pattern.tracks.length; track++) {
       if(pattern.tracks[track].name == data.trackName) {
         // put the state update into the right place
         pattern.tracks[track].steps[data.step] = data.state;
