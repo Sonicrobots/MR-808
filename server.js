@@ -1,4 +1,4 @@
-/* global require, process */
+/* global require, process, console, setTimeout */
 
 var path = require('path'),
     url = require('url'),
