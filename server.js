@@ -27,13 +27,14 @@ var pattern = {
   ]
 };
 
+var nicks = {};
+
 // configuration for all environments
 app.configure(function() {
   // we need to use() bodyParser() so we have access to the nick name post data
   app.use(express.bodyParser());
   // parse Cookies
   app.use(express.cookieParser());
-  app.use(express.session({secret: 'secret', key: 'seq.sid'}));
 
   // static content
   app.use("/img", express.static( path.join( process.cwd(), "img")));
@@ -52,6 +53,21 @@ app.configure("development", function() {
 // root resource
 app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
+});
+
+app.post("/login", function(request, response, next) {
+  var nick = request.body["nick"];
+  if(nick && nicks[nick] == undefined) {
+    nicks[nick] = { "expires-by": "bla"};
+    response.setHeader("X-Powered-By", "My Arse");
+    response.cookie('nickname', nick, { maxAge: 900000, httpOnly: false});
+    response.send(200);
+  }
+  else {
+    // FIXME: some logic to check session timestamps
+    response.cookie('nickname', "", { maxAge: 900000, httpOnly: false});
+    response.send(401);
+  }
 });
 
 // read only data
