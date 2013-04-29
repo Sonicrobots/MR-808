@@ -24,8 +24,7 @@ var pattern = {
     { id: "6", name: "hb", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     { id: "7", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     { id: "8", name: "cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
-  ],
-  nicks: {}
+  ]
 };
 
 // configuration for all environments
@@ -55,11 +54,19 @@ app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
 
-// handle client updates
-io.sockets.on('connection', function (socket) {
+// read only data
+var readOnlySockets = io.of("/read-socket");
+
+readOnlySockets.on('connection', function (socket) {
   // when a new client connects, it should receive current state
   socket.emit("initialize", pattern);
-  // register callback for updates from this client
+});
+
+// write data
+var writeSockets = io.of("/write-socket");
+
+writeSockets.on('connection', function(socket) {
+    // register callback for updates from this client
   socket.on('client-step-update', function (data) {
     // first, we store new state
     for( var track = 0; track < pattern.tracks.length; track++) {
@@ -69,15 +76,14 @@ io.sockets.on('connection', function (socket) {
       }
     }
     // and push it on to other peers
-    socket.broadcast.emit("group-step-update", data);
+    readOnlySockets.emit("group-step-update", data);
   });
 });
-
 
 function clockLoop() {
   setTimeout(function() {
     var step = clockCount % 16;
-    io.sockets.emit("clock-event", { step: "step-" + clockCount % 16 });
+    readOnlySockets.emit("clock-event", { step: "step-" + clockCount % 16 });
 
     clockCount++;
     clockLoop();

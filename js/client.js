@@ -1,6 +1,5 @@
 // initialize everything on document ready
 $(function() {
-
   // hack alert: center login box :(
   $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
   $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
@@ -14,9 +13,10 @@ $(function() {
     $(".left-function-box").text($(this).attr("id"));
   });
 
-  var socket = io.connect('http://localhost');
+  var readSocket = io.connect('http://localhost/read-socket'),
+      writeSocket = io.connect('http://localhost/write-socket');
 
-  socket.on('initialize', function (pattern) {
+  readSocket.on('initialize', function (pattern) {
     // for each track in the patter
     for(var track = 0; track < pattern.tracks.length; track++) {
       var steps = pattern.tracks[track].steps;
@@ -31,12 +31,12 @@ $(function() {
     }
   });
 
-  socket.on("clock-event", function(data) {
+  readSocket.on("clock-event", function(data) {
     $(".elipse").removeClass("current-step");
     $(".elipse#" + data.step).addClass("current-step");
   });
 
-  socket.on('group-step-update', function (data) {
+  readSocket.on('group-step-update', function (data) {
     var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
 
     if(data.state == 1) {
@@ -55,9 +55,9 @@ $(function() {
     $(this).children(".step-led").toggleClass("step-selected");
 
     if( $(this).children(".step-led").hasClass("step-selected") ) {
-      socket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
+      writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
     } else {
-      socket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 0 });
+      writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 0 });
     }
   });
 });
