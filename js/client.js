@@ -18,9 +18,9 @@ $(function() {
 
   socket.on('initialize', function (pattern) {
     // for each track in the patter
-    for(track = 0; track < pattern.tracks.length; track++) {
+    for(var track = 0; track < pattern.tracks.length; track++) {
       var steps = pattern.tracks[track].steps;
-      for(step = 0; step < steps.length; step++) {
+      for(var step = 0; step < steps.length; step++) {
         var selector = "#" + pattern.tracks[track].name + "-" + pattern.tracks[track].id + " #step-" + step + " .step-led";
         if(steps[step] > 0) {
           $(selector).addClass("step-selected");
