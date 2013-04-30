@@ -5,6 +5,7 @@ var path = require('path'),
     fs = require('fs'),
     express = require('express'),
     app = require('express')(),
+    cookieParser = express.cookieParser(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
@@ -34,7 +35,7 @@ app.configure(function() {
   // we need to use() bodyParser() so we have access to the nick name post data
   app.use(express.bodyParser());
   // parse Cookies
-  app.use(express.cookieParser());
+  app.use(cookieParser);
 
   // static content
   app.use("/img", express.static( path.join( process.cwd(), "img")));
@@ -45,7 +46,6 @@ app.configure(function() {
 
 app.configure("development", function() {
   app.use(function (req, res, next) {
-    console.log(req.headers);
     next();
   });
 });
@@ -55,6 +55,7 @@ app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
 
+// login action
 app.post("/login", function(request, response, next) {
   var nick = request.body["nick"];
   if(nick && nicks[nick] == undefined) {
@@ -81,8 +82,26 @@ readOnlySockets.on('connection', function (socket) {
 // write data
 var writeSockets = io.of("/write-socket");
 
+// parse cookies
+writeSockets.authorization(function (data, accept) {
+  var cookie = data.headers.cookie;
+  if( cookie != undefined || cookie != null ) {
+    var nickname = cookie.split("=")[1];
+
+    if(nickname && nicks[nickname]) {
+      accept(null, true);
+    }
+    else {
+      accept("nickname not recognized", false);
+    }
+  }
+  else {
+    accept("nickname not recognized", false);
+  }
+});
+
 writeSockets.on('connection', function(socket) {
-    // register callback for updates from this client
+  // register callback for updates from this client
   socket.on('client-step-update', function (data) {
     // first, we store new state
     for( var track = 0; track < pattern.tracks.length; track++) {
