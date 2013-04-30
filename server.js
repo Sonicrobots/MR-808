@@ -30,6 +30,15 @@ var pattern = {
 
 var nicks = {};
 
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+}
+
 // configuration for all environments
 app.configure(function() {
   // we need to use() bodyParser() so we have access to the nick name post data
@@ -59,7 +68,7 @@ app.get("/", function(request, response) {
 app.post("/login", function(request, response, next) {
   var nick = request.body["nick"];
   if(nick && nicks[nick] == undefined) {
-    nicks[nick] = { "expires-by": "bla"};
+    nicks[nick] = { nick: nick, color: getRandomColor(), "expires-by": "bla"};
     response.setHeader("X-Powered-By", "My Arse");
     response.cookie('nickname', nick, { maxAge: 900000, httpOnly: false});
     response.send(200);
@@ -103,6 +112,10 @@ writeSockets.authorization(function (data, accept) {
 writeSockets.on('connection', function(socket) {
   // register callback for updates from this client
   socket.on('client-step-update', function (data) {
+    var nick = socket.handshake.headers.cookie.split("=")[1];
+
+    data.user = nicks[nick];
+
     // first, we store new state
     for( var track = 0; track < pattern.tracks.length; track++) {
       if(pattern.tracks[track].name == data.trackName) {
