@@ -1,12 +1,20 @@
-/* global console setTimeout */
+/* global io $ console setTimeout */
 
 // initialize everything on document ready
 $(function() {
-  // the web socket objects
-  var readSocket,writeSocket;
+    // create a new users element for our nick
+  var nickname = $.fn.cookie('nickname');
 
-  // initialize callbacks and events
   function setupSocks() {
+    var userSocket, readSocket, writeSocket;
+
+    // **************************************** //
+    // Socket objects for namespaces
+    // **************************************** //
+    userSocket = io.connect('http://localhost:3000/users');
+    readSocket = io.connect('http://localhost:3000/read-socket');
+    writeSocket = io.connect('http://localhost:3000/write-socket');
+
     // click handlers for machine instrument images
     $(".machine img").click(function() {
       $(".track").css("display","none");
@@ -16,7 +24,43 @@ $(function() {
       $(".left-function-box").text($(this).attr("id"));
     });
 
-    // initialize the read-only socket and thus the pattern on the client
+    // **************************************** //
+    // User Socket
+    // **************************************** //
+    userSocket.on('initialize', function(users) {
+      for(var user in users) {
+        var userData = users[user];
+        console.log(userData);
+        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user'>" + userData.nick + "</div>");
+      }
+    });
+
+    userSocket.on('connected', function(user) {
+      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user'>" + user.nick + "</div>");
+    });
+
+    userSocket.on('disconnected', function(user) {
+      $("#" + user.nick).remove();
+    });
+
+    userSocket.on('error', function(err){
+      $.fn.cookie("nickname","");
+
+      // disconnect: ITS WEIRD
+      io.sockets["http://localhost:3000"].disconnect();
+      delete io.sockets["http://localhost:3000"];
+      io.j =[];
+
+      // hack alert: center login box :(
+      $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
+      $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
+      $("#login-box").show();
+      $("#overlay").show();
+    });
+
+    // **************************************** //
+    // Read Socket
+    // **************************************** //
     readSocket.on('initialize', function (pattern) {
       // for each track in the pattern
       for(var track = 0; track < pattern.tracks.length; track++) {
@@ -42,6 +86,19 @@ $(function() {
     readSocket.on('group-step-update', function (data) {
       var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
 
+      console.log("update from: " + data.user.nick + " with color: " + data.user.color);
+
+      // animate users token thingy
+      var oldWidth = $("#" + data.user.nick).width(),
+          oldHeight = $("#" + data.user.nick).height();
+
+      $("#" + data.user.nick).css("box-shadow", "0 0 10px 10px " + data.user.color);
+      $("#" + data.user.nick).css("width", (oldWidth + 10) + "px");
+      setTimeout(function() {
+        $("#" + data.user.nick).css("box-shadow", "");
+        $("#" + data.user.nick).css("width", oldWidth + "px");
+      },300);
+
       if(data.state == 1) {
         $(selector).addClass("step-selected");
       } else {
@@ -49,6 +106,9 @@ $(function() {
       };
     });
 
+    // **************************************** //
+    // Write Socket
+    // **************************************** //
     $(".box").click(function(data, fn) {
       var id = $(this).attr("id").split("-")[1],
           trackName = $(this).parent(".track").attr("id").split("-")[0],
@@ -58,6 +118,7 @@ $(function() {
         // switch state
         $(this).children(".step-led").toggleClass("step-selected");
 
+        // send update of step to server
         if( $(this).children(".step-led").hasClass("step-selected") ) {
           writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
         } else {
@@ -70,7 +131,6 @@ $(function() {
   // if the session already contains a nickname
   // if yes, just keep using that
   // if no, show the login box
-  var nickname = $.fn.cookie("nickname");
   if(nickname == null || nickname == undefined || nickname == "") {
     // hack alert: center login box :(
     $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
@@ -78,8 +138,6 @@ $(function() {
     $("#login-box").show();
     $("#overlay").show();
   } else {
-    readSocket = io.connect('http://localhost/read-socket',{ cookie: 'nickname=' + nickname });
-    writeSocket = io.connect('http://localhost/write-socket',{ cookie: 'nickname=' + nickname });
     setupSocks();
   }
 
@@ -92,11 +150,9 @@ $(function() {
       url: "http://localhost:3000/login",
       data: "nick="+nick,
       success: function(data, textStatus, xhr) {
+        setupSocks();
         $("#login-box").hide();
         $("#overlay").hide();
-        readSocket = io.connect('http://localhost/read-socket',{ cookie: 'nickname=' + nickname });
-        writeSocket = io.connect('http://localhost/write-socket',{ blubb: "helllo", cookie: 'nickname=' + nick });
-        setupSocks();
       },
       error: function(xhr, ajaxOptions, thrownError) {
         alert("nick already taken :(");

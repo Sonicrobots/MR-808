@@ -80,6 +80,29 @@ app.post("/login", function(request, response, next) {
   }
 });
 
+// global authorization feature
+io.configure(function(){
+  io.set('authorization', function(data, accept) {
+
+    var cookie = data.headers.cookie;
+    if( cookie ) {
+      var nickname = cookie.split("=")[1];
+      // accept connection if nick is known
+      if(nickname && nicks[nickname]) {
+        accept(null, true);
+      }
+      // else reject it
+      else {
+        accept("nickname not recognized", false);
+      }
+    }
+    // reject it if cookie is null
+    else {
+      accept("nickname not recognized", false);
+    }
+  });
+});
+
 // read only data
 var readOnlySockets = io.of("/read-socket");
 
@@ -90,24 +113,6 @@ readOnlySockets.on('connection', function (socket) {
 
 // write data
 var writeSockets = io.of("/write-socket");
-
-// parse cookies
-writeSockets.authorization(function (data, accept) {
-  var cookie = data.headers.cookie;
-  if( cookie != undefined || cookie != null ) {
-    var nickname = cookie.split("=")[1];
-
-    if(nickname && nicks[nickname]) {
-      accept(null, true);
-    }
-    else {
-      accept("nickname not recognized", false);
-    }
-  }
-  else {
-    accept("nickname not recognized", false);
-  }
-});
 
 writeSockets.on('connection', function(socket) {
   // register callback for updates from this client
@@ -125,6 +130,38 @@ writeSockets.on('connection', function(socket) {
     }
     // and push it on to other peers
     readOnlySockets.emit("group-step-update", data);
+  });
+});
+
+// write data
+var userSockets = io.of("/users");
+
+userSockets.on('connection', function(socket) {
+  // parse nick out of cookie
+  var nick = socket.handshake.headers.cookie.split("=")[1];
+  // keep track of socket id in nicks session array
+  nicks[nick].id = socket.id;
+
+  // clean up session array and send it along
+  for(var user in nicks) {
+    var userData = nicks[user];
+    if( userSockets.sockets[userData.id] == undefined ) {
+      userSockets.emit('disconnected', nicks[user]);
+      delete nicks[user];
+    }
+  }
+
+  // send all current nicks to socket on connection
+  socket.emit('initialize', nicks);
+  // then broadcast this nick's excitance to other nicks
+  socket.broadcast.emit('connected', nicks[nick]);
+
+  // tell others I left
+  socket.on('disconnect', function() {
+    // who disconnected?
+    userSockets.emit('disconnected', nicks[nick]);
+    // delete user!
+    // delete nicks[nick];
   });
 });
 

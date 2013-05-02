@@ -326,3 +326,26 @@ img#cong {
   right: 0;
   top: 85px;
 }
+
+#users {
+  position: absolute;  
+  width: 100%;
+  height: 100%;
+}
+
+.user {
+  top: 10px;
+  left: 10px;
+  width: 80px;
+  height: 45px;
+  border-radius: 50px;
+  margin: 20px;
+  position: relative;
+  text-align: center;
+  padding-top: 35px;
+  transition: all 0.3s ease;
+}
+
+.local {
+  background-color: white;
+}
