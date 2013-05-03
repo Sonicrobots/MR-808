@@ -46,7 +46,7 @@ $(function() {
     userSocket.on('error', function(err){
       $.fn.cookie("nickname","");
 
-      // disconnect: ITS WEIRD
+      // disconnect: ITS WEIRD, I KNOW
       io.sockets["http://localhost:3000"].disconnect();
       delete io.sockets["http://localhost:3000"];
       io.j =[];
@@ -114,7 +114,7 @@ $(function() {
           trackName = $(this).parent(".track").attr("id").split("-")[0],
           trackID = $(this).parent(".track").attr("id").split("-")[1];
 
-      if(writeSocket) {
+      if(writeSocket.socket.connected) {
         // switch state
         $(this).children(".step-led").toggleClass("step-selected");
 
