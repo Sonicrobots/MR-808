@@ -37,3 +37,41 @@
   -moz-animation-direction: alternate;
 }
 
+@-webkit-keyframes rotate
+{
+  from
+  {
+    -webkit-transform: rotate(360deg);
+  }
+  to
+  {
+    -webkit-transform: rotate(0deg);
+  }
+}
+ 
+@-moz-keyframes rotate
+{
+  from
+  {
+    -moz-transform: rotate(360deg);
+  }
+  to
+  {
+    -moz-transform: rotate(0deg);
+  }
+}
+
+.rotate-360 
+{
+  -webkit-animation-name: rotate;
+  -webkit-animation-timing-function: ease-in-out;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-direction: alternate;
+ 
+  -moz-animation-name: rotate;
+  -moz-animation-timing-function: ease-in-out;
+  -moz-animation-duration: 1s;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-direction: alternate;
+}

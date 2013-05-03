@@ -31,12 +31,12 @@ $(function() {
       for(var user in users) {
         var userData = users[user];
         console.log(userData);
-        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user'>" + userData.nick + "</div>");
+        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user track-selected'>" + userData.nick + "</div>");
       }
     });
 
     userSocket.on('connected', function(user) {
-      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user'>" + user.nick + "</div>");
+      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user track-selected'>" + user.nick + "</div>");
     });
 
     userSocket.on('disconnected', function(user) {
@@ -89,14 +89,16 @@ $(function() {
       console.log("update from: " + data.user.nick + " with color: " + data.user.color);
 
       // animate users token thingy
-      var oldWidth = $("#" + data.user.nick).width(),
-          oldHeight = $("#" + data.user.nick).height();
+      var circleWidth = 80,
+          circleHeight = 40;
 
       $("#" + data.user.nick).css("box-shadow", "0 0 10px 10px " + data.user.color);
-      $("#" + data.user.nick).css("width", (oldWidth + 10) + "px");
+      $("#" + data.user.nick).css("border-radius",0);
+      $("#" + data.user.nick).addClass("rotate-360");
       setTimeout(function() {
+        $("#" + data.user.nick).css("border-radius",40);
         $("#" + data.user.nick).css("box-shadow", "");
-        $("#" + data.user.nick).css("width", oldWidth + "px");
+        $("#" + data.user.nick).removeClass("rotate-360");
       },300);
 
       if(data.state == 1) {
