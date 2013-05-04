@@ -1,6 +1,8 @@
 /* global require, process, console, setTimeout */
 
-var path = require('path'),
+var midi = require('midi'),
+    output = new midi.output(),
+    path = require('path'),
     url = require('url'),
     fs = require('fs'),
     express = require('express'),
@@ -16,15 +18,15 @@ var clockCount = 0;
 // global variable to store state
 var pattern = {
   tracks: [
-    { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "1", name: "rattle", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "2", name: "hats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "3", name: "snare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "4", name: "hands", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "5", name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "6", name: "hb", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "7", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "8", name: "cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    { id: "0", note: 48, name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "1", note: 49, name: "rattle", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "2", note: 50, name: "hats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "3", note: 51, name: "snare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "4", note: 52, name: "hands", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "5", note: 53, name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "6", note: 54, name: "hb", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "7", note: 55, name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "8", note: 56, name: "cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
   ]
 };
 
@@ -165,14 +167,29 @@ userSockets.on('connection', function(socket) {
   });
 });
 
+for(var i = 0; i < output.getPortCount(); i++) {
+  if( output.getPortName(i).match(/Fast/) != null ) {
+    output.openPort(i);
+    break;
+  }
+}
+
 function clockLoop() {
   setTimeout(function() {
     var step = clockCount % 16;
     readOnlySockets.emit("clock-event", { step: "step-" + clockCount % 16 });
 
+    for(var i = 0; i < pattern.tracks.length; i++) {
+      var track = pattern.tracks[i],
+          steps = track.steps;
+      if( steps[clockCount % 16] > 0 ) {
+        output.sendMessage([144,track.note,110]);
+      }
+    }
+
     clockCount++;
     clockLoop();
-  }, 300);
+  }, 100);
 };
 
 clockLoop();
