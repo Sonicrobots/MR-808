@@ -3,10 +3,12 @@ MR-808: Collaborative Sequencer
 
 # Abstract #
 
-Collaboratively program the MR-808 drum robot!
+Collaborative, web-based MIDI sequencer application. Program beats
+together, in a Browser!
 
-FIXME, would ya....
+# Features #
 
+Supported Browsers: Firefox & Chromium
 
 # Requirements #
 
@@ -28,15 +30,12 @@ Navigate to
 
     http://localhost:3000
 
-and start fiddling with the buttons. Using a different browser,
-navigate to the same URL.
+and enter a nickname to identify yourself to other participants. Start
+fiddling with the buttons.
 
 # TODO #
 
-Much. But specifically (not in order of importance):
-
-* MIDI output 
-* proper sequencer timing
-* UI
-* more detailed TODOs :)
-* [Redis](http://redis.io) session & song/pattern storage?
+* command-line arguments for web server port
+* command-line arguments for midi interface name to choose
+* a way to configure the note-numbers
+* note-offs?
