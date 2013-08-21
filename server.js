@@ -11,25 +11,8 @@ var path = require('path'),
     net = require('net'),
     clockSocketPath = '/tmp/clock-socket',
     songUpdateSocketPath = '/tmp/song-update-socket',
-    clockSocket, songUpdateSocket, songUpdateSocketConn;
-
-// socket for receiving clock pulses + current step
-clockSocket = net.createServer(function(c) {
-                c.on('data', function(data) {
-                  readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
-                });
-              });
-clockSocket.listen(clockSocketPath);
-
-// socket for sending updates in pattern to sequencer
-songUpdateSocket = net.createServer(function(c) {
-                     console.log('song-update socket connected');
-                     songUpdateSocketConn = c;
-                   });
-songUpdateSocket.listen(songUpdateSocketPath);
-
-// web server
-server.listen(3000);
+    clockSocket, songUpdateSocket, songUpdateSocketConn,
+    nicks = {};
 
 // global variable to store state
 var pattern = {
@@ -46,7 +29,27 @@ var pattern = {
   ]
 };
 
-var nicks = {};
+// socket for receiving clock pulses + current step
+function initializeClockSocket(c) {
+  c.on('data', function(data) {
+    readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
+  });
+}
+clockSocket = net.createServer(initializeClockSocket);
+clockSocket.listen(clockSocketPath);
+
+// socket for sending updates in pattern to sequencer
+function initializeSongUpdateSocket(c) {
+  // assign the connection varable for updates during callbacks
+  songUpdateSocketConn = c;
+  // write current state of pattern to socket once a connection is open
+  c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
+}
+songUpdateSocket = net.createServer(initializeSongUpdateSocket);
+songUpdateSocket.listen(songUpdateSocketPath);
+
+// web server
+server.listen(3000);
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -146,7 +149,7 @@ writeSockets.on('connection', function(socket) {
         pattern.tracks[track].steps[data.step] = data.state;
 
         if(songUpdateSocketConn)
-          songUpdateSocketConn.write(JSON.stringify(pattern.tracks[track])+"\r\n");
+          songUpdateSocketConn.write(JSON.stringify({ type: "track", data: pattern.tracks[track] })+"\r\n");
       }
     }
     // and push it on to other peers
