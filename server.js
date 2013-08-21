@@ -1,19 +1,35 @@
 /* global require, process, console, setTimeout */
 
-var midi = require('midi'),
-    output = new midi.output(),
-    path = require('path'),
+var path = require('path'),
     url = require('url'),
     fs = require('fs'),
     express = require('express'),
     app = require('express')(),
     cookieParser = express.cookieParser(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    net = require('net'),
+    clockSocketPath = '/tmp/clock-socket',
+    songUpdateSocketPath = '/tmp/song-update-socket',
+    clockSocket, songUpdateSocket, songUpdateSocketConn;
 
+// socket for receiving clock pulses + current step
+clockSocket = net.createServer(function(c) {
+                c.on('data', function(data) {
+                  readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
+                });
+              });
+clockSocket.listen(clockSocketPath);
+
+// socket for sending updates in pattern to sequencer
+songUpdateSocket = net.createServer(function(c) {
+                     console.log('song-update socket connected');
+                     songUpdateSocketConn = c;
+                   });
+songUpdateSocket.listen(songUpdateSocketPath);
+
+// web server
 server.listen(3000);
-
-var clockCount = 0;
 
 // global variable to store state
 var pattern = {
@@ -128,6 +144,9 @@ writeSockets.on('connection', function(socket) {
       if(pattern.tracks[track].name == data.trackName) {
         // put the state update into the right place
         pattern.tracks[track].steps[data.step] = data.state;
+
+        if(songUpdateSocketConn)
+          songUpdateSocketConn.write(JSON.stringify(pattern.tracks[track])+"\r\n");
       }
     }
     // and push it on to other peers
@@ -167,29 +186,22 @@ userSockets.on('connection', function(socket) {
   });
 });
 
-for(var i = 0; i < output.getPortCount(); i++) {
-  if( output.getPortName(i).match(/Fast/) != null ) {
-    output.openPort(i);
-    break;
-  }
-}
 
-function clockLoop() {
-  setTimeout(function() {
-    var step = clockCount % 16;
-    readOnlySockets.emit("clock-event", { step: "step-" + clockCount % 16 });
+process.on('uncaughtException', function(err) {
+  console.log(err);
+  process.exit(1);
+});
 
-    for(var i = 0; i < pattern.tracks.length; i++) {
-      var track = pattern.tracks[i],
-          steps = track.steps;
-      if( steps[clockCount % 16] > 0 ) {
-        output.sendMessage([144,track.note,110]);
-      }
-    }
+process.on('SIGINT', function() {
+  process.exit(1);
+});
 
-    clockCount++;
-    clockLoop();
-  }, 100);
-};
+process.on('SIGQUIT', function() {
+  process.exit(1);
+});
 
-clockLoop();
+process.on('exit', function() {
+  console.log('About to exit.');
+  fs.unlinkSync(clockSocketPath);
+  fs.unlinkSync(songUpdateSocketPath);
+});
