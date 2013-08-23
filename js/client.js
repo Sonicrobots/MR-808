@@ -11,9 +11,9 @@ $(function() {
     // **************************************** //
     // Socket objects for namespaces
     // **************************************** //
-    userSocket = io.connect('http://localhost:3000/users');
-    readSocket = io.connect('http://localhost:3000/read-socket');
-    writeSocket = io.connect('http://localhost:3000/write-socket');
+    userSocket = io.connect('/users');
+    readSocket = io.connect('/read-socket');
+    writeSocket = io.connect('/write-socket');
 
     // click handlers for machine instrument images
     $(".machine img").click(function() {
@@ -47,8 +47,8 @@ $(function() {
       $.fn.cookie("nickname","");
 
       // disconnect: ITS WEIRD, I KNOW
-      io.sockets["http://localhost:3000"].disconnect();
-      delete io.sockets["http://localhost:3000"];
+      io.sockets[window.location.origin].disconnect();
+      delete io.sockets[window.location.origin];
       io.j =[];
 
       // hack alert: center login box :(
@@ -149,7 +149,7 @@ $(function() {
     var nick = $("#nick-name").val();
     $.ajax({
       type: "POST",
-      url: "http://localhost:3000/login",
+      url: "/login",
       data: "nick="+nick,
       success: function(data, textStatus, xhr) {
         setupSocks();
