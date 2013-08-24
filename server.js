@@ -12,7 +12,20 @@ var path = require('path'),
     clockSocketPath = '/tmp/clock-socket',
     songUpdateSocketPath = '/tmp/song-update-socket',
     clockSocket, songUpdateSocket, songUpdateSocketConn,
-    nicks = {};
+    webServerPort, nicks = {};
+
+// set up the port on which the server will run
+if(process.env['SEQ_SERVER_PORT']) {
+  try {
+    webServerPort = parseInt(process.env['SEQ_SERVER_PORT'],10);
+  }
+  catch(err) {
+    webServerPort = 3000;
+  }
+}
+else {
+  webServerPort = 3000;
+}
 
 // global variable to store state
 var pattern = {
@@ -49,7 +62,7 @@ songUpdateSocket = net.createServer(initializeSongUpdateSocket);
 songUpdateSocket.listen(songUpdateSocketPath);
 
 // web server
-server.listen(3000);
+server.listen(webServerPort);
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF'.split('');
@@ -114,6 +127,8 @@ io.configure(function(){
       }
       // else reject it
       else {
+	console.log("no cookie");
+
         accept("nickname not recognized", false);
       }
     }

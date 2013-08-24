@@ -1,0 +1,16 @@
+[Unit]
+Description=MR808 Sequencer Web Server
+Before=chicken_seq.service
+
+[Service]
+User=www
+Group=www
+WorkingDirectory=/srv/http/mr808
+Restart=always
+ExecStart=/usr/bin/node /srv/http/mr808/server.js
+Environment="SEQ_SERVER_PORT=8080" "PATH=/usr/bin:/usr/local/bin"
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=chicken_seq.service
