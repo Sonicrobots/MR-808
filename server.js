@@ -9,8 +9,7 @@ var path = require('path'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     net = require('net'),
-    clockSocketPath = '/tmp/clock-socket',
-    songUpdateSocketPath = '/tmp/song-update-socket',
+    clockSocketPath, songUpdateSocketPath,
     clockSocket, songUpdateSocket, songUpdateSocketConn,
     webServerPort, nicks = {};
 
@@ -27,7 +26,23 @@ else {
   webServerPort = 3000;
 }
 
-// global variable to store state
+// set up location for unix socket to open
+if(process.env['CLOCK_SOCKET']) {
+  clockSocketPath = process.env['CLOCK_SOCKET'];
+}
+else {
+  clockSocketPath = "/tmp/clock-socket";
+}
+
+// set up location for unix socket to open
+if(process.env['SONG_UPDATE_SOCKET']) {
+  songUpdateSocketPath = process.env['SONG_UPDATE_SOCKET'];
+}
+else {
+  songUpdateSocketPath = "/tmp/song-update-socket";
+}
+
+// song pattern state
 var pattern = {
   tracks: [
     { id: "0", note: 48, name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
