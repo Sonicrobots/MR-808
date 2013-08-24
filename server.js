@@ -46,12 +46,24 @@ var pattern = {
   ]
 };
 
+// socket for receiving clock pulses + current step
+function initializeClockSocket(c) {
+  c.on('data', function(data) {
+    readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
+  });
+}
+clockSocket = net.createServer(initializeClockSocket);
+clockSocket.listen(clockSocketPath);
+
 // socket for sending updates in pattern to sequencer
 function initializeSongUpdateSocket(c) {
   // assign the connection varable for updates during callbacks
+  songUpdateSocketConn = c;
   // write current state of pattern to socket once a connection is open
   c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
 }
+songUpdateSocket = net.createServer(initializeSongUpdateSocket);
+songUpdateSocket.listen(songUpdateSocketPath);
 
 // web server
 server.listen(webServerPort);
@@ -213,4 +225,6 @@ process.on('SIGQUIT', function() {
 
 process.on('exit', function() {
   console.log('About to exit.');
+  fs.unlinkSync(clockSocketPath);
+  fs.unlinkSync(songUpdateSocketPath);
 });
