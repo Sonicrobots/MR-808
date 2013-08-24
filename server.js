@@ -131,6 +131,8 @@ io.configure(function(){
       }
       // else reject it
       else {
+	console.log("no cookie");
+
         accept("nickname not recognized", false);
       }
     }
