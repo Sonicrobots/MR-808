@@ -8,7 +8,6 @@ var path = require('path'),
     cookieParser = express.cookieParser(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
-    net = require('net'),
     osc = require('node-osc'),
     clockServer = new osc.Server(7771,"0.0.0.0"),
     updateClient = new osc.Client("0.0.0.0", 57120),
@@ -46,24 +45,13 @@ var pattern = {
   ]
 };
 
-// socket for receiving clock pulses + current step
-function initializeClockSocket(c) {
-  c.on('data', function(data) {
-    readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
-  });
-}
-clockSocket = net.createServer(initializeClockSocket);
-clockSocket.listen(clockSocketPath);
-
-// socket for sending updates in pattern to sequencer
-function initializeSongUpdateSocket(c) {
-  // assign the connection varable for updates during callbacks
-  songUpdateSocketConn = c;
-  // write current state of pattern to socket once a connection is open
-  c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
-}
-songUpdateSocket = net.createServer(initializeSongUpdateSocket);
-songUpdateSocket.listen(songUpdateSocketPath);
+//  // socket for receiving clock pulses + current step
+// function initializeSongUpdateSocket(c) {
+//   // assign the connection varable for updates during callbacks
+//   songUpdateSocketConn = c;
+//   // write current state of pattern to socket once a connection is open
+//   c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
+// }
 
 // web server
 server.listen(webServerPort);
@@ -131,8 +119,6 @@ io.configure(function(){
       }
       // else reject it
       else {
-	console.log("no cookie");
-
         accept("nickname not recognized", false);
       }
     }
@@ -227,6 +213,4 @@ process.on('SIGQUIT', function() {
 
 process.on('exit', function() {
   console.log('About to exit.');
-  fs.unlinkSync(clockSocketPath);
-  fs.unlinkSync(songUpdateSocketPath);
 });
