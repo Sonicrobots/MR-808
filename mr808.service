@@ -1,0 +1,15 @@
+[Unit]
+Description=MR808 Sequencer Web Server
+Requires=chicken_seq.service
+Before=chicken_seq.service
+
+[Service]
+User=www
+Type=forking
+PIDFile=/var/run/mr808.pid
+Restart=always
+ExecStart="node /var/www/mr808/server.js"
+
+[Install]
+WantedBy=basic.target
+RequiredBy=chicken_seq.service

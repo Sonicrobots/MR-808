@@ -9,8 +9,9 @@ var path = require('path'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     net = require('net'),
-    clockSocketPath, songUpdateSocketPath,
-    clockSocket, songUpdateSocket, songUpdateSocketConn,
+    osc = require('node-osc'),
+    clockServer = new osc.Server(7771,"0.0.0.0"),
+    updateClient = new osc.Client("0.0.0.0", 57120),
     webServerPort, nicks = {};
 
 // set up the port on which the server will run
@@ -26,55 +27,31 @@ else {
   webServerPort = 3000;
 }
 
-// set up location for unix socket to open
-if(process.env['CLOCK_SOCKET']) {
-  clockSocketPath = process.env['CLOCK_SOCKET'];
-}
-else {
-  clockSocketPath = "/tmp/clock-socket";
-}
-
-// set up location for unix socket to open
-if(process.env['SONG_UPDATE_SOCKET']) {
-  songUpdateSocketPath = process.env['SONG_UPDATE_SOCKET'];
-}
-else {
-  songUpdateSocketPath = "/tmp/song-update-socket";
-}
-
-// song pattern state
+// global variable to store state
 var pattern = {
   tracks: [
-    { id: "0", note: 48, name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "1", note: 49, name: "rattle", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "2", note: 50, name: "hats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "3", note: 51, name: "snare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "4", note: 52, name: "hands", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "5", note: 53, name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "6", note: 54, name: "hb", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "7", note: 55, name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "8", note: 56, name: "cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "1", name: "topsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "2", name: "bottomsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "3", name: "small-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "4", name: "medium-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "5", name: "large-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "6", name: "claves", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "7", name: "tophats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "8", name: "bottomhats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "9", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "10", name: "carabassa", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "11", name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { id: "12", name: "cowbell", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
   ]
 };
-
-// socket for receiving clock pulses + current step
-function initializeClockSocket(c) {
-  c.on('data', function(data) {
-    readOnlySockets.emit("clock-event", { step: "step-" + data.toString() });
-  });
-}
-clockSocket = net.createServer(initializeClockSocket);
-clockSocket.listen(clockSocketPath);
 
 // socket for sending updates in pattern to sequencer
 function initializeSongUpdateSocket(c) {
   // assign the connection varable for updates during callbacks
-  songUpdateSocketConn = c;
   // write current state of pattern to socket once a connection is open
   c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
 }
-songUpdateSocket = net.createServer(initializeSongUpdateSocket);
-songUpdateSocket.listen(songUpdateSocketPath);
 
 // web server
 server.listen(webServerPort);
@@ -142,8 +119,6 @@ io.configure(function(){
       }
       // else reject it
       else {
-	console.log("no cookie");
-
         accept("nickname not recognized", false);
       }
     }
@@ -177,9 +152,7 @@ writeSockets.on('connection', function(socket) {
       if(pattern.tracks[track].name == data.trackName) {
         // put the state update into the right place
         pattern.tracks[track].steps[data.step] = data.state;
-
-        if(songUpdateSocketConn)
-          songUpdateSocketConn.write(JSON.stringify({ type: "track", data: pattern.tracks[track] })+"\r\n");
+        updateClient.send('/song_update',"(id: " + track + ", type: \"track\", data: " + JSON.stringify(pattern.tracks[track].steps) + ")");
       }
     }
     // and push it on to other peers
@@ -219,6 +192,11 @@ userSockets.on('connection', function(socket) {
   });
 });
 
+// socket for receiving clock pulses + current step
+clockServer.on('message', function(msg, rinfo) {
+  if(msg[0] === '/clock')
+    readOnlySockets.emit("clock-event", { step: "step-" + msg[1].toString() });
+});
 
 process.on('uncaughtException', function(err) {
   console.log(err);
@@ -235,6 +213,4 @@ process.on('SIGQUIT', function() {
 
 process.on('exit', function() {
   console.log('About to exit.');
-  fs.unlinkSync(clockSocketPath);
-  fs.unlinkSync(songUpdateSocketPath);
 });
