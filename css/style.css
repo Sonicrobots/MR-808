@@ -292,19 +292,28 @@ div.machine img {
   cursor: pointer;
 }
 
-img#hats {
+img#tophats {
   top: 90px;
+}
+
+img#bottomhats {
+  top: 138px;
 }
 
 img#bd {
   top: 200px;
 }
 
-img#snare {
+img#topsnare {
   left: 130px;
 }
 
-img#hands {
+img#bottomsnare {
+  left: 130px;
+  top: 83px;
+}
+
+img#claves {
   left: 130px;
   top: 170px;
 }
@@ -313,7 +322,7 @@ img#cym {
   left: 290px;
 }
 
-img#hb {
+img#cowbell {
   left: 290px;
   top: 135px;
 }
@@ -322,7 +331,17 @@ img#clap {
   right: 0;
 }
  
-img#cong {
+img#small-cong {
+  right: 105px;
+  top: 85px;
+}
+
+img#medium-cong {
+  right: 60px;
+  top: 85px;
+}
+
+img#large-cong {
   right: 0;
   top: 85px;
 }
