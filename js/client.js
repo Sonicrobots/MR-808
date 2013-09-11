@@ -2,16 +2,14 @@
 
 // initialize everything on document ready
 $(function() {
-    // create a new users element for our nick
-  var nickname = $.fn.cookie('nickname');
+  $("#overlay").show();
 
   function setupSocks() {
-    var userSocket, readSocket, writeSocket;
+    var readSocket, writeSocket;
 
     // **************************************** //
     // Socket objects for namespaces
     // **************************************** //
-    userSocket = io.connect('/users');
     readSocket = io.connect('/read-socket');
     writeSocket = io.connect('/write-socket');
 
@@ -22,40 +20,6 @@ $(function() {
       $(".machine img").removeClass("track-selected");
       $(this).addClass("track-selected");
       $(".left-function-box").text($(this).attr("id"));
-    });
-
-    // **************************************** //
-    // User Socket
-    // **************************************** //
-    userSocket.on('initialize', function(users) {
-      for(var user in users) {
-        var userData = users[user];
-        console.log(userData);
-        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user track-selected'>" + userData.nick + "</div>");
-      }
-    });
-
-    userSocket.on('connected', function(user) {
-      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user track-selected'>" + user.nick + "</div>");
-    });
-
-    userSocket.on('disconnected', function(user) {
-      $("#" + user.nick).remove();
-    });
-
-    userSocket.on('error', function(err){
-      $.fn.cookie("nickname","");
-
-      // disconnect: ITS WEIRD, I KNOW
-      io.sockets[window.location.origin].disconnect();
-      delete io.sockets[window.location.origin];
-      io.j =[];
-
-      // hack alert: center login box :(
-      $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-      $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-      $("#login-box").show();
-      $("#overlay").show();
     });
 
     // **************************************** //
@@ -86,21 +50,6 @@ $(function() {
     readSocket.on('group-step-update', function (data) {
       var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
 
-      console.log("update from: " + data.user.nick + " with color: " + data.user.color);
-
-      // animate users token thingy
-      var circleWidth = 80,
-          circleHeight = 40;
-
-      $("#" + data.user.nick).css("box-shadow", "0 0 10px 10px " + data.user.color);
-      $("#" + data.user.nick).css("border-radius",0);
-      $("#" + data.user.nick).addClass("rotate-360");
-      setTimeout(function() {
-        $("#" + data.user.nick).css("border-radius",40);
-        $("#" + data.user.nick).css("box-shadow", "");
-        $("#" + data.user.nick).removeClass("rotate-360");
-      },300);
-
       if(data.state == 1) {
         $(selector).addClass("step-selected");
       } else {
@@ -130,35 +79,13 @@ $(function() {
     });
   }
 
-  // if the session already contains a nickname
-  // if yes, just keep using that
-  // if no, show the login box
-  if(nickname == null || nickname == undefined || nickname == "") {
-    // hack alert: center login box :(
-    $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-    $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-    $("#login-box").show();
-    $("#overlay").show();
-  } else {
-    setupSocks();
-  }
-
   // on click see if the nick can be used and save it in session if so.
   // otherwise, warn the user.
   $("#submit-nick").click(function() {
-    var nick = $("#nick-name").val();
-    $.ajax({
-      type: "POST",
-      url: "/login",
-      data: "nick="+nick,
-      success: function(data, textStatus, xhr) {
-        setupSocks();
-        $("#login-box").hide();
-        $("#overlay").hide();
-      },
-      error: function(xhr, ajaxOptions, thrownError) {
-        alert("nick already taken :(");
-      }
-    });
+    setupSocks();
+    if (screenfull.enabled) {
+      screenfull.request();
+    }
+    $("#overlay").hide();
   });
 });

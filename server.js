@@ -11,7 +11,7 @@ var path = require('path'),
     osc = require('node-osc'),
     clockServer = new osc.Server(7771,"0.0.0.0"),
     updateClient = new osc.Client("0.0.0.0", 57120),
-    webServerPort, nicks = {};
+    webServerPort;
 
 // set up the port on which the server will run
 if(process.env['SEQ_SERVER_PORT']) {
@@ -90,48 +90,8 @@ app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
 
-// login action
-app.post("/login", function(request, response, next) {
-  var nick = request.body["nick"];
-  if(nick && nicks[nick] == undefined) {
-    nicks[nick] = { nick: nick, color: getRandomColor(), "expires-by": "bla"};
-    response.setHeader("X-Powered-By", "My Arse");
-    response.cookie('nickname', nick, { maxAge: 900000, httpOnly: false});
-    response.send(200);
-  }
-  else {
-    // FIXME: some logic to check session timestamps
-    response.cookie('nickname', "", { maxAge: 900000, httpOnly: false});
-    response.send(401);
-  }
-});
-
-// global authorization feature
-io.configure(function(){
-  io.set('authorization', function(data, accept) {
-
-    var cookie = data.headers.cookie;
-    if( cookie ) {
-      var nickname = cookie.split("=")[1];
-      // accept connection if nick is known
-      if(nickname && nicks[nickname]) {
-        accept(null, true);
-      }
-      // else reject it
-      else {
-        accept("nickname not recognized", false);
-      }
-    }
-    // reject it if cookie is null
-    else {
-      accept("nickname not recognized", false);
-    }
-  });
-});
-
 // read only data
 var readOnlySockets = io.of("/read-socket");
-
 readOnlySockets.on('connection', function (socket) {
   // when a new client connects, it should receive current state
   socket.emit("initialize", pattern);
@@ -139,14 +99,9 @@ readOnlySockets.on('connection', function (socket) {
 
 // write data
 var writeSockets = io.of("/write-socket");
-
 writeSockets.on('connection', function(socket) {
   // register callback for updates from this client
   socket.on('client-step-update', function (data) {
-    var nick = socket.handshake.headers.cookie.split("=")[1];
-
-    data.user = nicks[nick];
-
     // first, we store new state
     for( var track = 0; track < pattern.tracks.length; track++) {
       if(pattern.tracks[track].name == data.trackName) {
@@ -157,38 +112,6 @@ writeSockets.on('connection', function(socket) {
     }
     // and push it on to other peers
     readOnlySockets.emit("group-step-update", data);
-  });
-});
-
-// write data
-var userSockets = io.of("/users");
-
-userSockets.on('connection', function(socket) {
-  // parse nick out of cookie
-  var nick = socket.handshake.headers.cookie.split("=")[1];
-  // keep track of socket id in nicks session array
-  nicks[nick].id = socket.id;
-
-  // clean up session array and send it along
-  for(var user in nicks) {
-    var userData = nicks[user];
-    if( userSockets.sockets[userData.id] == undefined ) {
-      userSockets.emit('disconnected', nicks[user]);
-      delete nicks[user];
-    }
-  }
-
-  // send all current nicks to socket on connection
-  socket.emit('initialize', nicks);
-  // then broadcast this nick's excitance to other nicks
-  socket.broadcast.emit('connected', nicks[nick]);
-
-  // tell others I left
-  socket.on('disconnect', function() {
-    // who disconnected?
-    userSockets.emit('disconnected', nicks[nick]);
-    // delete user!
-    // delete nicks[nick];
   });
 });
 
