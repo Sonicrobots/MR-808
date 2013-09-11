@@ -1,13 +1,14 @@
 * {
   user-select: none;
+  margin: 0;
 }
 
 body {
 	font-family:'Conv_TR-909',Sans-Serif;
   margin: 0;
   padding: 0;
-  width: auto;
-  height: auto;
+  width: 980px;
+  height: 560px;
 }
 
 /* main div with wood panel background */
@@ -90,7 +91,7 @@ input.login-submit:active {
   top: 5%;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0px 0px 50px 10px #000;
+  box-shadow: 0px 0px 5px 1px #000;
   border-radius: 10px;
 }
 
@@ -275,6 +276,17 @@ img#tempo-dial {
   width: 120px;
 }
 
+img#dial { 
+  display: none;
+}
+
+.left-title {
+  display: none;
+}
+.left-function-box { display: none; }
+.right-function-box { display: none; }
+.bottom-bar { display: none; }
+
 div.machine {
   position: absolute;
   width: 595px;
@@ -340,27 +352,4 @@ img#medium-cong {
 img#large-cong {
   right: 0;
   top: 85px;
-}
-
-#users {
-  position: absolute;  
-  width: 100%;
-  height: 100%;
-}
-
-.user {
-  top: 10px;
-  left: 10px;
-  width: 80px;
-  height: 45px;
-  border-radius: 50px;
-  margin: 20px;
-  position: relative;
-  text-align: center;
-  padding-top: 35px;
-  transition: all 0.3s ease;
-}
-
-.local {
-  background-color: white;
 }

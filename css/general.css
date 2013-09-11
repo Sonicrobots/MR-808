@@ -1,0 +1,147 @@
+
+/* elipses are the step position indicator */
+.elipse-box {
+  float: left;
+  width: 24px;
+  margin: 5px 5px 0px 5px;
+}
+
+.elipse {
+  width: 10px;
+  height: 10px;
+  background-color: #333333;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.current-step {
+  box-shadow: 0px 0px 2px 3px #ffa500;
+  background-color: #ff8000 !important;
+  transition: all 0.14s ease-in-out;
+}
+
+/* table for the current track and step position led's */
+table td {
+  font-weight: bold;
+  font-size: 1.2em;
+  text-shadow: -1px -1px 0px #aaa, -1px 1px 0px #aaa, 1px -1px 0px #aaa, 1px 1px 0px #aaa;
+}
+
+.step-number {
+  width: 24px;
+  margin: 0 5px 0 5px;
+  text-align: center;
+  float: left;
+}
+
+/* single step styles */
+.box {
+  cursor: pointer;
+  float: left;
+  margin: 5px;
+  width: 22px;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid black;
+}
+
+.box:hover {
+  box-shadow: 0px 0px 10px #bbb;
+}
+
+.box.red {
+  background-color: #ff6f55;
+}
+
+.box.orange {
+  background-color: #ffc141;
+}
+
+.box.yellow {
+  background-color: #fbfc81;
+}
+
+.box.white {
+  background-color: #fdfdff;
+}
+
+/* step selected indicator */
+.step-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background-color: #333;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3px;
+}
+
+.step-selected {
+  box-shadow: 0px 0px 1px 2px #bb0000;
+  background-color: #ff0000;
+  transition: all 0.05s ease-in-out;
+}
+
+div.machine img {
+  position: absolute;
+  cursor: pointer;
+}
+
+img#tophats {
+  top: 90px;
+}
+
+img#bottomhats {
+  top: 138px;
+}
+
+img#bd {
+  top: 200px;
+}
+
+img#topsnare {
+  left: 130px;
+}
+
+img#bottomsnare {
+  left: 130px;
+  top: 83px;
+}
+
+img#claves {
+  left: 130px;
+  top: 170px;
+}
+
+img#cym {
+  left: 290px;
+}
+
+img#cowbell {
+  left: 290px;
+  top: 135px;
+}
+
+img#clap {
+  right: 0;
+}
+ 
+img#small-cong {
+  right: 105px;
+  top: 85px;
+}
+
+img#medium-cong {
+  right: 60px;
+  top: 85px;
+}
+
+img#large-cong {
+  right: 0;
+  top: 85px;
+}
+
+div.hidden {
+  display: none;
+}
