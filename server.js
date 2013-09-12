@@ -28,6 +28,7 @@ else {
 
 // global variable to store state
 var pattern = {
+  tempo: 120,
   tracks: [
     { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
     { id: "1", name: "topsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
