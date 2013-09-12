@@ -2,8 +2,6 @@
 
 // initialize everything on document ready
 $(function() {
-  $("#overlay").show();
-
   function setupSocks() {
     var readSocket, writeSocket;
 
@@ -77,15 +75,17 @@ $(function() {
         }
       }
     });
-  }
+  };
+
+  setupSocks();
 
   // on click see if the nick can be used and save it in session if so.
   // otherwise, warn the user.
   $("#submit-nick").click(function() {
-    setupSocks();
     if (screenfull.enabled) {
       screenfull.request();
     }
-    $("#overlay").hide();
+    $("#login").hide();
+    $("#main").show();
   });
 });
