@@ -2,6 +2,18 @@
 
 // initialize everything on document ready
 $(function() {
+  var bpm = 128;
+
+  function playStepSequence(step) {
+    $('.elipse').removeClass('current-step');
+    $('#step-' + step).addClass('current-step');
+
+    var delta = (1 / (bpm/60) * 1000) / 4;
+
+    if( step < 15 )
+      setTimeout(function () { playStepSequence((step + 1) % 16) }, delta);
+  }
+
   function setupSocks() {
     var readSocket, writeSocket;
 
@@ -24,6 +36,7 @@ $(function() {
     // Read Socket
     // **************************************** //
     readSocket.on('initialize', function (pattern) {
+      bpm = pattern.tempo;
       // for each track in the pattern
       for(var track = 0; track < pattern.tracks.length; track++) {
         var steps = pattern.tracks[track].steps;
@@ -40,8 +53,9 @@ $(function() {
 
     // respond to clock events
     readSocket.on("clock-event", function(data) {
-      $(".elipse").removeClass("current-step");
-      $(".elipse#" + data.step).addClass("current-step");
+      var step = parseInt(data.step.split("-")[1], 10);
+      if( step === 0 )
+        playStepSequence(step);
     });
 
     // respond to group updates coming from peers (also read-only socket namespace)
