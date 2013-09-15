@@ -98,6 +98,8 @@ writeSockets.on('connection', function(socket) {
     }
     // and push it on to other peers
     readOnlySockets.emit("group-step-update", data);
+    // people are still using the machine, so we extend the deadline
+    lastChangeOccurred = new Date().getTime();
   });
 });
 
