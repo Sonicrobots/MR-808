@@ -1,0 +1,52 @@
+* {
+  user-select: none;
+  margin: 0;
+}
+
+body {
+	font-family:'Conv_TR-909',Sans-Serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+#main {
+  border: 1px solid red;
+  width: 100%;
+  height: 100%;
+}
+
+.button-container {
+  position: relative;
+  top: 10%;
+  margin: auto;
+  width: 220px;
+}
+
+.button-container h1 {
+  width: 100%;
+  text-align: center;
+}
+
+.button {
+  height: 50px;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.button h1 {
+  position: relative;
+  vertical-align: middle;
+}
+
+.button.start {
+  background-color: green;
+}
+
+.button.stop {
+  background-color: red;
+}
