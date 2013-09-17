@@ -13,7 +13,7 @@ var path = require('path'),
     clockServer = new osc.Server(7771,"0.0.0.0"),
     updateClient = new osc.Client("0.0.0.0", 57120),
     webServerPort, lastChangeOccurred = new Date().getTime(),
-    RESET_PATTERN_TIMEOUT = 1000 * 60 * 2,
+    RESET_PATTERN_TIMEOUT = 1000 * 30,
     defaultPattern = {
       tempo: 128,
       tracks: [
