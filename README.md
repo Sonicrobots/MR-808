@@ -35,3 +35,10 @@ fiddling with the buttons.
 # TODO #
 
 * command-line arguments for web server port
+
+# Misc Command Line Snippets #
+* Mounting a Raspberry Pi image on linux:
+* http://raspberrypi.stackexchange.com/questions/13137/how-can-i-mount-a-raspberry-pi-linux-distro-image
+
+
+
