@@ -1,0 +1,14 @@
+
+check process nodejs with pidfile /var/run/mr808-node.pid
+    start program = "/sbin/start-stop-daemon --start --pidfile=/var/run/mr808-node.pid -m --exec /root/MR-808/mr808.sh &"
+    stop program  = "/sbin/start-stop-daemon --stop --pidfile=/var/run/mr808-node.pid -m --exec /root/MR-808/mr808.sh"
+    if failed host localhost port 80 protocol http 
+       and request "/index.html"
+       then restart
+    group mr808
+
+check process sclang with pidfile /var/run/mr808-sc.pid
+    start program = "/sbin/start-stop-daemon --start --pidfile=/var/run/mr808-sc.pid -m --exec /root/sc/mr808.sh &"
+    stop program  = "/sbin/start-stop-daemon --stop --pidfile=/var/run/mr808-sc.pid -m --exec /root/sc/mr808.sh"
+    depends on nodejs
+    group mr808
