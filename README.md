@@ -15,6 +15,29 @@ Supported Browsers: Firefox & Chromium, possibly others.
 * node.js [http://nodejs.org](http://nodejs.org)
 * socket.io [http://socket.io/](http://socket.io/)
 
+# Services #
+
+Starting: 
+
+```
+service mr808-node start
+service mr808-sc start
+```
+
+Stopping: 
+
+```
+service mr808-node stop
+service mr808-sc stop
+```
+
+Restarting:
+
+```
+service mr808-node restart
+service mr808-sc restart
+```
+
 # Usage #
 
 Change to project directory and install dependencies with:

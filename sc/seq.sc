@@ -50,7 +50,6 @@ MIDIClient.init;
 
 		}
 	});
-	"tick".postln;
 	~node.sendMsg("/clock", ~step);
 	~step = (~step + 1) % 16;
 	0.25;
