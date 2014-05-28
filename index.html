@@ -2,28 +2,38 @@
   <head>
     <title>seq</title>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/screenfull.js"></script> 
     <script src="js/zepto.js"></script>
     <script src="js/zepto.cookie.js"></script>
     <script src="js/client.js"></script>
+
     <link type="text/css" rel="stylesheet" media="all" href="css/fonts.css"></link>
-    <link type="text/css" rel="stylesheet" media="all" href="css/style.css"></link>
-    <link type="text/css" rel="stylesheet" media="all" href="css/animations.css"></link>
+    <link type="text/css" rel="stylesheet" media="screen" href="css/animations.css"></link>
+    <link type="text/css" rel="stylesheet" media="screen" href="css/style.css"></link>
   </head>
   <body>
-
-    <div id="login-box" style="display:none;">
-      <div class="inlay">
-        Enter a Nickname:
-        <input id="nick-name" class="login-input" type="text" /><br/>
-        <input id="submit-nick" class="login-submit" type="submit" value="Submit">
+    <div id="login" class="overlay">
+      <div id="login-box">
+        <div class="inlay">
+          <div>Start Application.</div>
+          <input id="submit-nick" class="login-submit" type="submit" value="Submit">
+        </div>
       </div>
     </div>
-    <div id="overlay" style="display:none;"></div>
+
+    <div id="orientation" class="overlay">
+      <div class="outter">
+        <div class="middle">
+          <div class="inner">
+            <img src="img/pointer.svg" class="pointer" alt="turn" />
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="main">
-      <div id="users"></div>
-
       <div class="sequencer">
         <div class="machine">
           <img id="carabassa" data-track-id="carabassa-10" src="img/rattle.png" />
@@ -42,13 +52,13 @@
         </div>
 
         <img id="tempo-dial" src="img/tempo-dial.jpg" />
-
         <div class="left-title"><span class="wide">MR</span><div>808</div></div>
-
         <div class="left-function-box">bd</div>
         <div class="right-function-box"> </div>
         <div class="bottom-bar"> </div>
-        
+
+        <div class="divider"></div>
+
         <table class="step-sequencer">
           <tr>
             <td>
@@ -367,8 +377,8 @@
               <div class="clearer"></div>
             </td>
           </tr>
-
         </table>
+        <img src="img/bottombox.png" class="bottombox" alt="bottombox" />
       </div>
     </div>
   </body>

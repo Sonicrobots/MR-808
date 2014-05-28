@@ -2,16 +2,24 @@
 
 // initialize everything on document ready
 $(function() {
-    // create a new users element for our nick
-  var nickname = $.fn.cookie('nickname');
+  var bpm = 128;
+
+  function playStepSequence(step) {
+    $('.elipse').removeClass('current-step');
+    $('#step-' + step).addClass('current-step');
+
+    var delta = (1 / (bpm/60) * 1000) / 4;
+
+    if( step < 15 )
+      setTimeout(function () { playStepSequence((step + 1) % 16) }, delta);
+  }
 
   function setupSocks() {
-    var userSocket, readSocket, writeSocket;
+    var readSocket, writeSocket;
 
     // **************************************** //
     // Socket objects for namespaces
     // **************************************** //
-    userSocket = io.connect('/users');
     readSocket = io.connect('/read-socket');
     writeSocket = io.connect('/write-socket');
 
@@ -25,43 +33,10 @@ $(function() {
     });
 
     // **************************************** //
-    // User Socket
-    // **************************************** //
-    userSocket.on('initialize', function(users) {
-      for(var user in users) {
-        var userData = users[user];
-        console.log(userData);
-        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user track-selected'>" + userData.nick + "</div>");
-      }
-    });
-
-    userSocket.on('connected', function(user) {
-      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user track-selected'>" + user.nick + "</div>");
-    });
-
-    userSocket.on('disconnected', function(user) {
-      $("#" + user.nick).remove();
-    });
-
-    userSocket.on('error', function(err){
-      $.fn.cookie("nickname","");
-
-      // disconnect: ITS WEIRD, I KNOW
-      io.sockets[window.location.origin].disconnect();
-      delete io.sockets[window.location.origin];
-      io.j =[];
-
-      // hack alert: center login box :(
-      $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-      $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-      $("#login-box").show();
-      $("#overlay").show();
-    });
-
-    // **************************************** //
     // Read Socket
     // **************************************** //
     readSocket.on('initialize', function (pattern) {
+      bpm = pattern.tempo;
       // for each track in the pattern
       for(var track = 0; track < pattern.tracks.length; track++) {
         var steps = pattern.tracks[track].steps;
@@ -78,28 +53,14 @@ $(function() {
 
     // respond to clock events
     readSocket.on("clock-event", function(data) {
-      $(".elipse").removeClass("current-step");
-      $(".elipse#" + data.step).addClass("current-step");
+      var step = parseInt(data.step.split("-")[1], 10);
+      if( step === 0 )
+        playStepSequence(step);
     });
 
     // respond to group updates coming from peers (also read-only socket namespace)
     readSocket.on('group-step-update', function (data) {
       var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
-
-      console.log("update from: " + data.user.nick + " with color: " + data.user.color);
-
-      // animate users token thingy
-      var circleWidth = 80,
-          circleHeight = 40;
-
-      $("#" + data.user.nick).css("box-shadow", "0 0 10px 10px " + data.user.color);
-      $("#" + data.user.nick).css("border-radius",0);
-      $("#" + data.user.nick).addClass("rotate-360");
-      setTimeout(function() {
-        $("#" + data.user.nick).css("border-radius",40);
-        $("#" + data.user.nick).css("box-shadow", "");
-        $("#" + data.user.nick).removeClass("rotate-360");
-      },300);
 
       if(data.state == 1) {
         $(selector).addClass("step-selected");
@@ -128,37 +89,17 @@ $(function() {
         }
       }
     });
-  }
+  };
 
-  // if the session already contains a nickname
-  // if yes, just keep using that
-  // if no, show the login box
-  if(nickname == null || nickname == undefined || nickname == "") {
-    // hack alert: center login box :(
-    $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-    $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-    $("#login-box").show();
-    $("#overlay").show();
-  } else {
-    setupSocks();
-  }
+  setupSocks();
 
   // on click see if the nick can be used and save it in session if so.
   // otherwise, warn the user.
   $("#submit-nick").click(function() {
-    var nick = $("#nick-name").val();
-    $.ajax({
-      type: "POST",
-      url: "/login",
-      data: "nick="+nick,
-      success: function(data, textStatus, xhr) {
-        setupSocks();
-        $("#login-box").hide();
-        $("#overlay").hide();
-      },
-      error: function(xhr, ajaxOptions, thrownError) {
-        alert("nick already taken :(");
-      }
-    });
+    if (screenfull.enabled) {
+      screenfull.request();
+    }
+    $("#login").hide();
+    $("#main").show();
   });
 });

@@ -15,7 +15,6 @@ var path = require('path'),
     webServerPort, lastChangeOccurred = new Date().getTime(),
     RESET_PATTERN_TIMEOUT = 1000 * 30,
     defaultPattern = {
-      transport: 1,
       tempo: 128,
       tracks: [
         { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
@@ -79,11 +78,6 @@ app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
 
-// root resource
-app.get("/transport", function(request, response) {
-  response.sendfile(path.join(process.cwd(), "transport.html"));
-});
-
 // read only data
 var readOnlySockets = io.of("/read-socket");
 readOnlySockets.on('connection', function (socket) {
@@ -109,16 +103,6 @@ writeSockets.on('connection', function(socket) {
     readOnlySockets.emit("group-step-update", data);
     // people are still using the machine, so we extend the deadline
     lastChangeOccurred = new Date().getTime();
-  });
-});
-
-var controlSockets = io.of('/controls');
-controlSockets.on('connection', function(socket) {
-  controlSockets.emit('transport', { state: pattern.transport });
-  socket.on('transport', function(data) {
-    pattern.transport = parseInt(data.state,10);
-    controlSockets.emit('transport', data);
-    updateClient.send('/transport', pattern.transport);
   });
 });
 

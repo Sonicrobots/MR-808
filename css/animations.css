@@ -75,3 +75,19 @@
   -moz-animation-iteration-count: 1;
   -moz-animation-direction: alternate;
 }
+
+/* @-webkit-keyframes rotate { */
+/*   from { */
+/*     -webkit-transform: rotate(0deg); */
+/*   } */
+/*   to {  */
+/*     -webkit-transform: rotate(360deg); */
+/*   } */
+/* } */
+/* #orientation img */
+/* { */
+/*     -webkit-animation-name:             rotate;  */
+/*     -webkit-animation-duration:         8.5s;  */
+/*     -webkit-animation-iteration-count:  infinite; */
+/*     -webkit-animation-timing-function:  linear; */
+/* } */

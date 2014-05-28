@@ -1,36 +1,39 @@
 * {
   user-select: none;
+  margin: 0;
 }
 
 body {
 	font-family:'Conv_TR-909',Sans-Serif;
   margin: 0;
   padding: 0;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/bg.jpg')
 }
 
 /* main div with wood panel background */
-#overlay {
+.overlay {
   z-index: 1;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
-  opacity: 0.7;
-  transition: opacity 5s ease-in-out;
+  background-color: #eee;
+}
+
+#login {
+  display: none;
 }
 
 #login-box {
   z-index: 3;
-  position: absolute;
   width: 230px;
   height: 160px;
+  margin: auto;
   background-color: #fff;
   border-radius: 20px;
-  box-shadow: 0px 0px 100px 40px #000,0 0 2px 2px #fff;
 }
 
 .inlay {
@@ -67,11 +70,9 @@ input.login-submit:active {
   background-color: #ddd;
 }
 
-/* main div with wood panel background */
 #main {
   width: 100%;
   height: 100%;
-  background-image: url('../img/bg.jpg');
 }
 
 .clearer {
@@ -94,9 +95,15 @@ input.login-submit:active {
   top: 5%;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0px 0px 50px 10px #000;
-  border-radius: 10px;
+  box-shadow: 0px 0px 1px 1px #000;
 }
+
+img.bottombox {
+  position: absolute;
+  bottom: -23px;
+  left: -10px;
+}
+  
 
 .step-number {
   width: 24px;
@@ -201,12 +208,6 @@ table.step-sequencer {
   top: 20px;
 }
 
-#track-dial select {
-  position: absolute;
-  left: 14px;
-  top: 25px;
-}
-
 .left-function-box {
   text-shadow: -1px -1px 0px #aaa, -1px 1px 0px #aaa, 1px -1px 0px #aaa, 1px 1px 0px #aaa;
   text-align: center;
@@ -279,6 +280,7 @@ img#tempo-dial {
   width: 120px;
 }
 
+
 div.machine {
   position: absolute;
   width: 595px;
@@ -346,25 +348,211 @@ img#large-cong {
   top: 85px;
 }
 
-#users {
-  position: absolute;  
-  width: 100%;
-  height: 100%;
+#orientation {
+  display: none;
 }
 
-.user {
-  top: 10px;
-  left: 10px;
-  width: 80px;
-  height: 45px;
-  border-radius: 50px;
-  margin: 20px;
-  position: relative;
-  text-align: center;
-  padding-top: 35px;
-  transition: all 0.3s ease;
-}
+/* **************************************** */
+/* RULES FOR MOBILE DEVICES  */
+/* **************************************** */
 
-.local {
-  background-color: white;
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  * {
+    vertical-align: baseline;
+    font-weight: inherit;
+    font-family: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    border: 0 none;
+    outline: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body {
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    background-image: none;
+  }
+
+  #main {
+    display: none;
+  }
+
+  #login {
+    display: block;
+  }
+
+  .sequencer {
+    border: 0;
+    background-color: #000;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  img.bottombox {
+    display: none;
+  }
+  
+  .elipse {
+    width: 10px;
+    height: 10px;
+    background-color: #333333;
+    border-radius: 10px;
+    margin: 4px auto;
+  }
+
+  /* elipses are the step position indicator */
+  .elipse-box {
+    float: left;
+    width: 24px;
+    height: 20px;
+    margin: 5px 5px 8px 5px;
+  }
+
+  table.step-sequencer {
+    margin: auto;
+    position: relative;
+    bottom: 0;
+    right: 0;
+  }
+
+  div.machine {
+    position: relative;
+    margin: auto;
+    margin: 50px auto 10px auto;
+    left: 0;
+    top: 0;
+  }
+
+  img#dial { 
+    display: none;
+  }
+
+  .left-title {
+    display: none;
+  }
+
+  .left-function-box { 
+    display: none; 
+  }
+
+  .right-function-box {
+    display: none;
+  }
+
+  .bottom-bar { 
+    display: none; 
+  }
+
+  img#tempo-dial {
+    display: none;
+  }
+  
+  #orientation .outter {
+    background-color: #000;
+    position: relative;
+    height: 100%;
+    display: table;
+    position: static;
+  }
+  
+  #orientation .middle {
+    background-color: #000;
+    position: absolute; 
+    top: 50%;
+    display: table-cell; 
+    vertical-align: middle; 
+    width: 100%;
+    position: static;
+  }
+
+  #orientation .pointer-box {
+    background-color: #000;
+    top: 50%;
+    position: absolute;
+    display: table-cell;
+    vertical-align: middle;
+    height: 100%;
+  }
+  
+  #orientation .inner {
+    background-color: #000;
+    width: 30%;
+    margin: auto;
+  }
+  
+  img.pointer {
+    width: 100%;
+  }
+
+  /* show the normal view */
+  @media screen and (orientation:landscape) {
+    #orientation {
+      display: none;
+    }
+    #login {
+      display: block;
+    }
+  }
+
+  /* show the turn-around sign */
+  @media screen and (orientation:portrait) {
+    #orientation {
+      display: block;
+    }
+    #login {
+      display: none;
+    }
+  }
+  /* nexus 7 */
+  @media screen and (max-width: 600px) and (max-height: 400px){
+    table.step-sequencer {
+      margin-top: -50px;
+      -webkit-transform: scale(0.9);
+    }
+
+    div.machine {
+      margin: 0 auto 0 auto;
+      -webkit-transform: scale(0.8);
+    }
+
+    .divider {
+      height: 2px;
+      clear: both;
+    }
+
+    .step-number {
+      padding-bottom: 5px;
+    }
+  }
+
+  /* nexus 7 */
+  @media screen and (max-width: 960px) and (max-height: 563px)
+                and (min-width: 600px) and (min-height: 400px)
+  {
+    table.step-sequencer {
+      -webkit-transform: scale(1.35);
+    }
+
+    div.machine { 
+      -webkit-transform: scale(1.35);
+    }
+
+    .divider {
+      height: 40px;
+      clear: both;
+    }
+
+    .step-number {
+      padding-bottom: 5px;
+    }
+  }
+
+    /* -moz-transform:scale(1.5); */
+    /* -webkit-transform:scale(1.5); */
+    /* transform:scale(1.5); */
 }
