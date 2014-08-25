@@ -1,0 +1,86 @@
+_____________________________________________________________________
++ Program class: com/sonicrobots/mr808/Main
+  Superclass:    android/app/Activity
+  Major version: 0x32
+  Minor version: 0x0
+    = target 1.6
+  Access flags:  0x21
+    = public class com.sonicrobots.mr808.Main extends android.app.Activity
+
+Interfaces (count = 0):
+
+Constant Pool (count = 29):
+  + String [http://google.com]
+  + Class [android/app/Activity]
+  + Class [android/webkit/WebView]
+  + Class [com/sonicrobots/mr808/Main]
+  + Methodref [android/app/Activity.<init> ()V]
+  + Methodref [android/app/Activity.onCreate (Landroid/os/Bundle;)V]
+  + Methodref [android/webkit/WebView.<init> (Landroid/content/Context;)V]
+  + Methodref [android/webkit/WebView.loadUrl (Ljava/lang/String;)V]
+  + Methodref [com/sonicrobots/mr808/Main.setContentView (Landroid/view/View;)V]
+  + NameAndType [<init> ()V]
+  + NameAndType [<init> (Landroid/content/Context;)V]
+  + NameAndType [loadUrl (Ljava/lang/String;)V]
+  + NameAndType [onCreate (Landroid/os/Bundle;)V]
+  + NameAndType [setContentView (Landroid/view/View;)V]
+  + Utf8 [()V]
+  + Utf8 [(Landroid/content/Context;)V]
+  + Utf8 [(Landroid/os/Bundle;)V]
+  + Utf8 [(Landroid/view/View;)V]
+  + Utf8 [(Ljava/lang/String;)V]
+  + Utf8 [<init>]
+  + Utf8 [Code]
+  + Utf8 [android/app/Activity]
+  + Utf8 [android/webkit/WebView]
+  + Utf8 [com/sonicrobots/mr808/Main]
+  + Utf8 [http://google.com]
+  + Utf8 [loadUrl]
+  + Utf8 [onCreate]
+  + Utf8 [setContentView]
+
+Fields (count = 0):
+
+Methods (count = 2):
+  - Method:       <init>()V
+    Access flags: 0x1
+      = public Main()
+    Class member attributes (count = 1):
+    + Code attribute instructions (code length = 5, locals = 1, stack = 1):
+      [0] aload_0 v0
+      [1] invokespecial #5
+        + Methodref [android/app/Activity.<init> ()V]
+      [4] return
+      Code attribute exceptions (count = 0):
+      Code attribute attributes (attribute count = 0):
+  + Method:       onCreate(Landroid/os/Bundle;)V
+    Access flags: 0x1
+      = public void onCreate(android.os.Bundle)
+    Class member attributes (count = 1):
+    + Code attribute instructions (code length = 26, locals = 3, stack = 3):
+      [0] aload_0 v0
+      [1] aload_1 v1
+      [2] invokespecial #6
+        + Methodref [android/app/Activity.onCreate (Landroid/os/Bundle;)V]
+      [5] new #3
+        + Class [android/webkit/WebView]
+      [8] dup
+      [9] aload_0 v0
+      [10] invokespecial #7
+        + Methodref [android/webkit/WebView.<init> (Landroid/content/Context;)V]
+      [13] astore_2 v2
+      [14] aload_2 v2
+      [15] ldc #1
+        + String [http://google.com]
+      [17] invokevirtual #8
+        + Methodref [android/webkit/WebView.loadUrl (Ljava/lang/String;)V]
+      [20] aload_0 v0
+      [21] aload_2 v2
+      [22] invokevirtual #9
+        + Methodref [com/sonicrobots/mr808/Main.setContentView (Landroid/view/View;)V]
+      [25] return
+      Code attribute exceptions (count = 0):
+      Code attribute attributes (attribute count = 0):
+
+Class file attributes (count = 0):
+
