@@ -1,6 +1,0 @@
-com.sonicrobots.mr808.BuildConfig
-com.sonicrobots.mr808.R
-com.sonicrobots.mr808.R$attr
-com.sonicrobots.mr808.R$drawable
-com.sonicrobots.mr808.R$layout
-com.sonicrobots.mr808.R$string

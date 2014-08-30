@@ -31,7 +31,7 @@ public class Main extends Activity
         });
         
         setContentView(wView);
-        wView.loadUrl("http://192.168.23.40:3000");
+        wView.loadUrl("http://192.168.1.100");
     }
 
     @Override

@@ -1,5 +1,0 @@
-com.sonicrobots.mr808.Main
-com.sonicrobots.mr808.Main: Main()
-com.sonicrobots.mr808.R$drawable: int ic_launcher
-com.sonicrobots.mr808.R$layout: int main
-com.sonicrobots.mr808.R$string: int app_name

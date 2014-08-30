@@ -1,2 +1,0 @@
-com.sonicrobots.mr808.Main -> com.sonicrobots.mr808.Main:
-    void onCreate(android.os.Bundle) -> onCreate
