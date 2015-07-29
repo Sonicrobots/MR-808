@@ -580,3 +580,7 @@ img#large-cong {
     /* -webkit-transform:scale(1.5); */
     /* transform:scale(1.5); */
 }
+
+.disabled {
+  opacity: 0.5;
+}

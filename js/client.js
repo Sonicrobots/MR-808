@@ -44,12 +44,62 @@ $(function() {
           var selector = "#" + pattern.tracks[track].name + "-" + pattern.tracks[track].id + " #step-" + step + " .step-led";
           if(steps[step] > 0) {
             $(selector).addClass("step-selected");
+            if(pattern.tracks[track].name === 'clap') {
+              disableButtons($(selector).parent(), "" + step);
+            }
           } else {
             $(selector).removeClass("step-selected");
           }
         }
       }
     });
+
+    function getNeighbors(arr, idx, num) {
+      var out = [];
+      arr.forEach(function(item, iidx) {
+        if(iidx >= (idx - num) &&
+           iidx <  (idx + num))
+          out.push(item);
+      });
+      return out;
+    }
+
+    function anySelected($els) {
+      var out = false;
+      $els.forEach(function(item) {
+        if($(item).children(".step-led").hasClass('step-selected'))
+          out = true;
+      });
+      return out;
+    }
+
+    var NUM_NEIGHBORS = 3;
+
+    function canSetStep($el, step) {
+      var id = parseInt(step, 10);
+      var neighbors = getNeighbors($el.siblings(), id, NUM_NEIGHBORS);
+      return !anySelected(neighbors);
+    }
+
+    function resetStates($el, step) {
+      $el.siblings().forEach(function(sib) {
+        $(sib).removeClass('disabled');
+      });
+
+      $el.siblings().forEach(function(sib) {
+        if($(sib).children('.step-led').hasClass('step-selected')) {
+          var id = $(sib).attr("id").split("-")[1];
+          disableButtons($(sib), id);
+        }
+      });
+    }
+
+    function disableButtons($el, id) {
+      var neighbors = getNeighbors($el.siblings(), parseInt(id,10), NUM_NEIGHBORS);
+      neighbors.forEach(function(item) {
+        $(item).addClass('disabled');
+      });
+    }
 
     // respond to clock events
     readSocket.on("clock-event", function(data) {
@@ -73,20 +123,40 @@ $(function() {
     // Write Socket
     // **************************************** //
     $(".box").click(function(data, fn) {
-      var id = $(this).attr("id").split("-")[1],
-          trackName = $(this).parent(".track").attr("id").split("-")[0],
-          trackID = $(this).parent(".track").attr("id").split("-")[1];
+      var $el       = $(this);
+      var $led      = $el.children(".step-led");
+      var id        = $el.attr("id").split("-")[1];
+      var trackName = $el.parent(".track").attr("id").split("-")[0];
+      var trackID   = $el.parent(".track").attr("id").split("-")[1];
 
       if(writeSocket.socket.connected) {
-        // switch state
-        $(this).children(".step-led").toggleClass("step-selected");
+        // switch if off in any event
+        if($led.hasClass("step-selected")) {
+          $led.toggleClass("step-selected");
 
-        // send update of step to server
-        if( $(this).children(".step-led").hasClass("step-selected") ) {
-          writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
-        } else {
-          writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 0 });
-        }
+          // send update of step to server
+          writeSocket.emit('client-step-update', {
+            step:      id,
+            trackID:   trackID,
+            trackName: trackName,
+            state: 0
+          });
+
+          resetStates($el, id);
+        } else if(trackName != 'clap' || canSetStep($el, id)) {
+          $led.toggleClass("step-selected");
+
+          writeSocket.emit('client-step-update', {
+            step:      id,
+            trackID:   trackID,
+            trackName: trackName,
+            state:     1
+          });
+
+          if(trackName === 'clap') {
+            disableButtons($el, id);
+          }
+        } 
       }
     });
   };
