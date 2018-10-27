@@ -2,16 +2,24 @@
 
 // initialize everything on document ready
 $(function() {
-    // create a new users element for our nick
-  var nickname = $.fn.cookie('nickname');
+  var bpm = 128;
+
+  function playStepSequence(step) {
+    $('.elipse').removeClass('current-step');
+    $('#step-' + step).addClass('current-step');
+
+    var delta = (1 / (bpm/60) * 1000) / 4;
+
+    if( step < 15 )
+      setTimeout(function () { playStepSequence((step + 1) % 16) }, delta);
+  }
 
   function setupSocks() {
-    var userSocket, readSocket, writeSocket;
+    var readSocket, writeSocket;
 
     // **************************************** //
     // Socket objects for namespaces
     // **************************************** //
-    userSocket = io.connect('/users');
     readSocket = io.connect('/read-socket');
     writeSocket = io.connect('/write-socket');
 
@@ -25,43 +33,10 @@ $(function() {
     });
 
     // **************************************** //
-    // User Socket
-    // **************************************** //
-    userSocket.on('initialize', function(users) {
-      for(var user in users) {
-        var userData = users[user];
-        console.log(userData);
-        $("#users").append("<div id='" + userData.nick +"' style='background-color: " + userData.color + ";' class='user track-selected'>" + userData.nick + "</div>");
-      }
-    });
-
-    userSocket.on('connected', function(user) {
-      $("#users").append("<div id='" + user.nick +"' style='background-color: " + user.color + ";' class='user track-selected'>" + user.nick + "</div>");
-    });
-
-    userSocket.on('disconnected', function(user) {
-      $("#" + user.nick).remove();
-    });
-
-    userSocket.on('error', function(err){
-      $.fn.cookie("nickname","");
-
-      // disconnect: ITS WEIRD, I KNOW
-      io.sockets[window.location.origin].disconnect();
-      delete io.sockets[window.location.origin];
-      io.j =[];
-
-      // hack alert: center login box :(
-      $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-      $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-      $("#login-box").show();
-      $("#overlay").show();
-    });
-
-    // **************************************** //
     // Read Socket
     // **************************************** //
     readSocket.on('initialize', function (pattern) {
+      bpm = pattern.tempo;
       // for each track in the pattern
       for(var track = 0; track < pattern.tracks.length; track++) {
         var steps = pattern.tracks[track].steps;
@@ -69,6 +44,9 @@ $(function() {
           var selector = "#" + pattern.tracks[track].name + "-" + pattern.tracks[track].id + " #step-" + step + " .step-led";
           if(steps[step] > 0) {
             $(selector).addClass("step-selected");
+            if(pattern.tracks[track].name === 'clap') {
+              disableButtons($(selector).parent(), "" + step);
+            }
           } else {
             $(selector).removeClass("step-selected");
           }
@@ -76,30 +54,63 @@ $(function() {
       }
     });
 
+    function getNeighbors(arr, idx, num) {
+      var out = [];
+      arr.forEach(function(item, iidx) {
+        if(iidx >= (idx - num) &&
+           iidx <  (idx + num))
+          out.push(item);
+      });
+      return out;
+    }
+
+    function anySelected($els) {
+      var out = false;
+      $els.forEach(function(item) {
+        if($(item).children(".step-led").hasClass('step-selected'))
+          out = true;
+      });
+      return out;
+    }
+
+    var NUM_NEIGHBORS = 3;
+
+    function canSetStep($el, step) {
+      var id = parseInt(step, 10);
+      var neighbors = getNeighbors($el.siblings(), id, NUM_NEIGHBORS);
+      return !anySelected(neighbors);
+    }
+
+    function resetStates($el, step) {
+      $el.siblings().forEach(function(sib) {
+        $(sib).removeClass('disabled');
+      });
+
+      $el.siblings().forEach(function(sib) {
+        if($(sib).children('.step-led').hasClass('step-selected')) {
+          var id = $(sib).attr("id").split("-")[1];
+          disableButtons($(sib), id);
+        }
+      });
+    }
+
+    function disableButtons($el, id) {
+      var neighbors = getNeighbors($el.siblings(), parseInt(id,10), NUM_NEIGHBORS);
+      neighbors.forEach(function(item) {
+        $(item).addClass('disabled');
+      });
+    }
+
     // respond to clock events
     readSocket.on("clock-event", function(data) {
-      $(".elipse").removeClass("current-step");
-      $(".elipse#" + data.step).addClass("current-step");
+      var step = parseInt(data.step.split("-")[1], 10);
+      if( step === 0 )
+        playStepSequence(step);
     });
 
     // respond to group updates coming from peers (also read-only socket namespace)
     readSocket.on('group-step-update', function (data) {
       var selector = "#" + data.trackName + "-" + data.trackID + " #step-" + data.step + " .step-led";
-
-      console.log("update from: " + data.user.nick + " with color: " + data.user.color);
-
-      // animate users token thingy
-      var circleWidth = 80,
-          circleHeight = 40;
-
-      $("#" + data.user.nick).css("box-shadow", "0 0 10px 10px " + data.user.color);
-      $("#" + data.user.nick).css("border-radius",0);
-      $("#" + data.user.nick).addClass("rotate-360");
-      setTimeout(function() {
-        $("#" + data.user.nick).css("border-radius",40);
-        $("#" + data.user.nick).css("box-shadow", "");
-        $("#" + data.user.nick).removeClass("rotate-360");
-      },300);
 
       if(data.state == 1) {
         $(selector).addClass("step-selected");
@@ -112,53 +123,53 @@ $(function() {
     // Write Socket
     // **************************************** //
     $(".box").click(function(data, fn) {
-      var id = $(this).attr("id").split("-")[1],
-          trackName = $(this).parent(".track").attr("id").split("-")[0],
-          trackID = $(this).parent(".track").attr("id").split("-")[1];
+      var $el       = $(this);
+      var $led      = $el.children(".step-led");
+      var id        = $el.attr("id").split("-")[1];
+      var trackName = $el.parent(".track").attr("id").split("-")[0];
+      var trackID   = $el.parent(".track").attr("id").split("-")[1];
 
       if(writeSocket.socket.connected) {
-        // switch state
-        $(this).children(".step-led").toggleClass("step-selected");
+        // switch if off in any event
+        if($led.hasClass("step-selected")) {
+          $led.toggleClass("step-selected");
 
-        // send update of step to server
-        if( $(this).children(".step-led").hasClass("step-selected") ) {
-          writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 1 });
-        } else {
-          writeSocket.emit('client-step-update', { trackName: trackName, trackID: trackID, step: id, state: 0 });
-        }
+          // send update of step to server
+          writeSocket.emit('client-step-update', {
+            step:      id,
+            trackID:   trackID,
+            trackName: trackName,
+            state: 0
+          });
+
+          resetStates($el, id);
+        } else if(trackName != 'clap' || canSetStep($el, id)) {
+          $led.toggleClass("step-selected");
+
+          writeSocket.emit('client-step-update', {
+            step:      id,
+            trackID:   trackID,
+            trackName: trackName,
+            state:     1
+          });
+
+          if(trackName === 'clap') {
+            disableButtons($el, id);
+          }
+        } 
       }
     });
-  }
+  };
 
-  // if the session already contains a nickname
-  // if yes, just keep using that
-  // if no, show the login box
-  if(nickname == null || nickname == undefined || nickname == "") {
-    // hack alert: center login box :(
-    $("#login-box").css("left",($("#main").width() / 2.0) - ($("#login-box").width() / 2.0));
-    $("#login-box").css("top",($("#main").height() / 2.0) - ($("#login-box").height() / 2.0));
-    $("#login-box").show();
-    $("#overlay").show();
-  } else {
-    setupSocks();
-  }
+  setupSocks();
 
   // on click see if the nick can be used and save it in session if so.
   // otherwise, warn the user.
   $("#submit-nick").click(function() {
-    var nick = $("#nick-name").val();
-    $.ajax({
-      type: "POST",
-      url: "/login",
-      data: "nick="+nick,
-      success: function(data, textStatus, xhr) {
-        setupSocks();
-        $("#login-box").hide();
-        $("#overlay").hide();
-      },
-      error: function(xhr, ajaxOptions, thrownError) {
-        alert("nick already taken :(");
-      }
-    });
+    if (screenfull.enabled) {
+      screenfull.request();
+    }
+    $("#login").hide();
+    $("#main").show();
   });
 });

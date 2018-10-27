@@ -3,6 +3,7 @@
 var path = require('path'),
     url = require('url'),
     fs = require('fs'),
+    lodash = require('lodash'),
     express = require('express'),
     app = require('express')(),
     cookieParser = express.cookieParser(),
@@ -11,7 +12,32 @@ var path = require('path'),
     osc = require('node-osc'),
     clockServer = new osc.Server(7771,"0.0.0.0"),
     updateClient = new osc.Client("0.0.0.0", 57120),
-    webServerPort, nicks = {};
+    webServerPort, lastChangeOccurred = new Date().getTime(),
+    RESET_PATTERN_TIMEOUT = 1000 * 30,
+    defaultPattern = {
+      transport: 1,
+      tempo: 128,
+      tracks: [
+        { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "1", name: "topsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "2", name: "bottomsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "3", name: "smallcong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "4", name: "mediumcong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "5", name: "largecong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "6", name: "claves", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "7", name: "tophats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "8", name: "bottomhats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "9", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "10", name: "carabassa", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "11", name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+        { id: "12", name: "cowbell", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+      ]
+    };
+
+io.set('log level',0);
+
+// global variable to store state
+var pattern = lodash.cloneDeep(defaultPattern);
 
 // set up the port on which the server will run
 if(process.env['SEQ_SERVER_PORT']) {
@@ -26,44 +52,8 @@ else {
   webServerPort = 3000;
 }
 
-// global variable to store state
-var pattern = {
-  tracks: [
-    { id: "0", name: "bd", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "1", name: "topsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "2", name: "bottomsnare", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "3", name: "small-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "4", name: "medium-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "5", name: "large-cong", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "6", name: "claves", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "7", name: "tophats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "8", name: "bottomhats", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "9", name: "clap", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "10", name: "carabassa", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "11", name: "cym", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-    { id: "12", name: "cowbell", steps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
-  ]
-};
-
-//  // socket for receiving clock pulses + current step
-// function initializeSongUpdateSocket(c) {
-//   // assign the connection varable for updates during callbacks
-//   songUpdateSocketConn = c;
-//   // write current state of pattern to socket once a connection is open
-//   c.write(JSON.stringify({ type: "init", data: pattern }) + "\r\n");
-// }
-
 // web server
 server.listen(webServerPort);
-
-function getRandomColor() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.round(Math.random() * 15)];
-    }
-    return color;
-}
 
 // configuration for all environments
 app.configure(function() {
@@ -71,7 +61,6 @@ app.configure(function() {
   app.use(express.bodyParser());
   // parse Cookies
   app.use(cookieParser);
-
   // static content
   app.use("/img", express.static( path.join( process.cwd(), "img")));
   app.use("/css", express.static( path.join( process.cwd(), "css")));
@@ -90,48 +79,13 @@ app.get("/", function(request, response) {
   response.sendfile(path.join(process.cwd(), "index.html"));
 });
 
-// login action
-app.post("/login", function(request, response, next) {
-  var nick = request.body["nick"];
-  if(nick && nicks[nick] == undefined) {
-    nicks[nick] = { nick: nick, color: getRandomColor(), "expires-by": "bla"};
-    response.setHeader("X-Powered-By", "My Arse");
-    response.cookie('nickname', nick, { maxAge: 900000, httpOnly: false});
-    response.send(200);
-  }
-  else {
-    // FIXME: some logic to check session timestamps
-    response.cookie('nickname', "", { maxAge: 900000, httpOnly: false});
-    response.send(401);
-  }
-});
-
-// global authorization feature
-io.configure(function(){
-  io.set('authorization', function(data, accept) {
-
-    var cookie = data.headers.cookie;
-    if( cookie ) {
-      var nickname = cookie.split("=")[1];
-      // accept connection if nick is known
-      if(nickname && nicks[nickname]) {
-        accept(null, true);
-      }
-      // else reject it
-      else {
-        accept("nickname not recognized", false);
-      }
-    }
-    // reject it if cookie is null
-    else {
-      accept("nickname not recognized", false);
-    }
-  });
+// root resource
+app.get("/transport", function(request, response) {
+  response.sendfile(path.join(process.cwd(), "transport.html"));
 });
 
 // read only data
 var readOnlySockets = io.of("/read-socket");
-
 readOnlySockets.on('connection', function (socket) {
   // when a new client connects, it should receive current state
   socket.emit("initialize", pattern);
@@ -143,10 +97,6 @@ var writeSockets = io.of("/write-socket");
 writeSockets.on('connection', function(socket) {
   // register callback for updates from this client
   socket.on('client-step-update', function (data) {
-    var nick = socket.handshake.headers.cookie.split("=")[1];
-
-    data.user = nicks[nick];
-
     // first, we store new state
     for( var track = 0; track < pattern.tracks.length; track++) {
       if(pattern.tracks[track].name == data.trackName) {
@@ -157,45 +107,44 @@ writeSockets.on('connection', function(socket) {
     }
     // and push it on to other peers
     readOnlySockets.emit("group-step-update", data);
+    // people are still using the machine, so we extend the deadline
+    lastChangeOccurred = new Date().getTime();
   });
 });
 
-// write data
-var userSockets = io.of("/users");
-
-userSockets.on('connection', function(socket) {
-  // parse nick out of cookie
-  var nick = socket.handshake.headers.cookie.split("=")[1];
-  // keep track of socket id in nicks session array
-  nicks[nick].id = socket.id;
-
-  // clean up session array and send it along
-  for(var user in nicks) {
-    var userData = nicks[user];
-    if( userSockets.sockets[userData.id] == undefined ) {
-      userSockets.emit('disconnected', nicks[user]);
-      delete nicks[user];
-    }
-  }
-
-  // send all current nicks to socket on connection
-  socket.emit('initialize', nicks);
-  // then broadcast this nick's excitance to other nicks
-  socket.broadcast.emit('connected', nicks[nick]);
-
-  // tell others I left
-  socket.on('disconnect', function() {
-    // who disconnected?
-    userSockets.emit('disconnected', nicks[nick]);
-    // delete user!
-    // delete nicks[nick];
+var controlSockets = io.of('/controls');
+controlSockets.on('connection', function(socket) {
+  controlSockets.emit('transport', { state: pattern.transport });
+  socket.on('transport', function(data) {
+    pattern.transport = parseInt(data.state,10);
+    controlSockets.emit('transport', data);
+    updateClient.send('/transport', pattern.transport);
   });
 });
 
 // socket for receiving clock pulses + current step
 clockServer.on('message', function(msg, rinfo) {
+  if(msg[0] === '/init') {
+    lodash.forEach(pattern.tracks, function(track) {
+      // put the state update into the right place
+      updateClient.send('/song_update',"(id: " + track.id + ", type: \"track\", data: " + JSON.stringify(track.steps) + ")");
+    });
+  }
+
   if(msg[0] === '/clock')
     readOnlySockets.emit("clock-event", { step: "step-" + msg[1].toString() });
+
+  if( new Date().getTime() - lastChangeOccurred > RESET_PATTERN_TIMEOUT ) {
+    pattern = lodash.cloneDeep(defaultPattern); //reset pattern
+    readOnlySockets.emit('initialize', pattern); //tell every client
+
+    lodash.forEach(pattern.tracks, function(track) {
+      // put the state update into the right place
+      updateClient.send('/song_update',"(id: " + track.id + ", type: \"track\", data: " + JSON.stringify(track.steps) + ")");
+    });
+
+    lastChangeOccurred = new Date().getTime();
+  }
 });
 
 process.on('uncaughtException', function(err) {
