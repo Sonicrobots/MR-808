@@ -1,4 +1,4 @@
-package sonicrobots.com.mr808;
+package com.sonicrobots.mr808;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package sonicrobots.com.mr808;
+package com.sonicrobots.mr808;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("sonicrobots.com.mr808", appContext.getPackageName());
+        assertEquals("com.sonicrobots.mr808", appContext.getPackageName());
     }
 }
