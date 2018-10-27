@@ -67,7 +67,7 @@ public class WebViewActivity extends Activity {
 
     private void loadPage(WebView view) {
         Log.d("MR-808", "loading page");
-        view.loadUrl("http://192.168.178.20:8080");
+        view.loadUrl("http://192.168.1.100");
     }
 
     @Override
