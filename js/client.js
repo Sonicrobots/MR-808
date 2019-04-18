@@ -129,7 +129,7 @@ $(function() {
       var trackName = $el.parent(".track").attr("id").split("-")[0];
       var trackID   = $el.parent(".track").attr("id").split("-")[1];
 
-      if(writeSocket.socket.connected) {
+      if(writeSocket.connected) {
         // switch if off in any event
         if($led.hasClass("step-selected")) {
           $led.toggleClass("step-selected");

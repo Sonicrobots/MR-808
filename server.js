@@ -6,7 +6,8 @@ var path = require('path'),
     lodash = require('lodash'),
     express = require('express'),
     app = require('express')(),
-    cookieParser = express.cookieParser(),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     osc = require('node-osc'),
@@ -34,7 +35,7 @@ var path = require('path'),
       ]
     };
 
-io.set('log level',0);
+//io.set('log level',0);
 
 // global variable to store state
 var pattern = lodash.cloneDeep(defaultPattern);
@@ -56,32 +57,26 @@ else {
 server.listen(webServerPort);
 
 // configuration for all environments
-app.configure(function() {
-  // we need to use() bodyParser() so we have access to the nick name post data
-  app.use(express.bodyParser());
-  // parse Cookies
-  app.use(cookieParser);
-  // static content
-  app.use("/img", express.static( path.join( process.cwd(), "img")));
-  app.use("/css", express.static( path.join( process.cwd(), "css")));
-  app.use("/fonts", express.static( path.join( process.cwd(), "fonts")));
-  app.use("/js", express.static( path.join( process.cwd(), "js")));
-});
+// we need to use() bodyParser() so we have access to the nick name post data
 
-app.configure("development", function() {
-  app.use(function (req, res, next) {
-    next();
-  });
-});
+// edit by moerk 2019-04-18: don't get where body or cookie values are used, commenting out (seems to cause runtime troubles)
+//app.use(bodyParser);
+// parse Cookies
+//app.use(cookieParser);
+// static content
+app.use("/img", express.static( path.join( process.cwd(), "img")));
+app.use("/css", express.static( path.join( process.cwd(), "css")));
+app.use("/fonts", express.static( path.join( process.cwd(), "fonts")));
+app.use("/js", express.static( path.join( process.cwd(), "js")));
 
 // root resource
 app.get("/", function(request, response) {
-  response.sendfile(path.join(process.cwd(), "index.html"));
+    response.sendFile(path.join(process.cwd(), "index.html"));
 });
 
 // root resource
 app.get("/transport", function(request, response) {
-  response.sendfile(path.join(process.cwd(), "transport.html"));
+  response.sendFile(path.join(process.cwd(), "transport.html"));
 });
 
 // read only data
